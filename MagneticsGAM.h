@@ -34,14 +34,35 @@ private:
 		float HorizontalCurrent;
 		float VerticalCurrent;
 		float PrimaryCurrent;
-		 int usectime;
+		int usectime;
 	};
 	struct OutputInterfaceStruct {
 		float MagneticProbesR;
 		float MagneticProbesZ;
 		float MagneticProbesPlasmaCurrent;
+		float ADC_magnetic_WO_corrctd_0;
+		float ADC_magnetic_WO_corrctd_1;
+		float ADC_magnetic_WO_corrctd_2;
+		float ADC_magnetic_WO_corrctd_3;
+		float ADC_magnetic_WO_corrctd_4;
+		float ADC_magnetic_WO_corrctd_5;
+		float ADC_magnetic_WO_corrctd_6;
+		float ADC_magnetic_WO_corrctd_7;
+		float ADC_magnetic_WO_corrctd_8;
+		float ADC_magnetic_WO_corrctd_9;
+		float ADC_magnetic_WO_corrctd_10;
+		float ADC_magnetic_WO_corrctd_11;
+
 	};
 
+	uint saved_usectime;
+	uint lasttime;
+	float slope;
+	float *lastmirnov;
+	float *mirnovaccumulator;
+	int accumulatorcounter;
+	float buff;
+	int k;
 	int usectime_to_wait_for_starting_operation;
 	bool magnetic_radial_bool;
 	bool magnetic_vertical_bool;
@@ -59,7 +80,14 @@ private:
 	float *vertical_coeficients;
 	float *magnetic_Offset_zero;
 	float *ADC_values;
+	float *ADC_WO;
 	float *corrected_probes;
+
+	float **slopes;
+	float *slope_avrg;
+	float *ADC_fact;
+	float *ADC_WO_Wb;
+
 	// Picked values of magneticflux in databases for substraction
 	float *allmirnv_prim;
 	float *allmirnv_hor;
@@ -70,7 +98,6 @@ private:
 	float *primarydata; //[A]
 	float *horizontaldata;
 	float *verticaldata;
-	
 	float **mirnprim;
 	
 	float **mirnhor;

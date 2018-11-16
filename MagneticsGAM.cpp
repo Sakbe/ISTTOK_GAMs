@@ -236,12 +236,25 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 		return False;
 	}
 
-	number_of_signals_to_read = 3;
+	number_of_signals_to_read = 15;
 	CDB_move_to = new FString[number_of_signals_to_read];
 	SignalType = new FString[number_of_signals_to_read];
 	CDB_move_to[0].Printf("magnetic_probes_r");
 	CDB_move_to[1].Printf("magnetic_probes_z");
 	CDB_move_to[2].Printf("magnetic_probes_plasma_current");
+	CDB_move_to[3].Printf("ADC_magnetic_WO_corrctd_0");
+	CDB_move_to[4].Printf("ADC_magnetic_WO_corrctd_1");
+	CDB_move_to[5].Printf("ADC_magnetic_WO_corrctd_2");
+	CDB_move_to[6].Printf("ADC_magnetic_WO_corrctd_3");
+	CDB_move_to[7].Printf("ADC_magnetic_WO_corrctd_4");
+	CDB_move_to[8].Printf("ADC_magnetic_WO_corrctd_5");
+	CDB_move_to[9].Printf("ADC_magnetic_WO_corrctd_6");
+	CDB_move_to[10].Printf("ADC_magnetic_WO_corrctd_7");
+	CDB_move_to[11].Printf("ADC_magnetic_WO_corrctd_8");
+	CDB_move_to[12].Printf("ADC_magnetic_WO_corrctd_9");
+	CDB_move_to[13].Printf("ADC_magnetic_WO_corrctd_10");
+	CDB_move_to[14].Printf("ADC_magnetic_WO_corrctd_11");
+
 	for (i = 0; i<number_of_signals_to_read; i++) {
 
 		if (!cdb->Move(CDB_move_to[i].Buffer()))
@@ -278,10 +291,16 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	this->allmirnv_hor = new float[this->NumberOfProbes];
 	this->allmirnv_vert = new float[this->NumberOfProbes];
 	this->ADC_values = new float[this->NumberOfProbes];
+	this->ADC_WO = new float[this->NumberOfProbes];
+	this->ADC_WO_Wb = new float[this->NumberOfProbes];
+	
+	
 	this->corrected_probes = new float[this->NumberOfMeasurements];
 	this->magnetic_Offset_zero = new float[this->NumberOfModules];
 	for (i = 0; i < this->NumberOfProbes; i++) {
 		this->ADC_values[i] = 0.0;
+		this->ADC_WO[i] = 0.0;
+		this->ADC_WO_Wb[i] = 0.0;
 		this->corrected_probes[i] = 0.0;
 		this->magnetic_Offset_zero[i] = 0.0;
 		this->allmirnv_prim[i]=0.0;
@@ -303,17 +322,42 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	this->clip_limit = 0.085; // -clip_limit < output r and z position < +clip_limit
 
 	//Some constantants
-	this->Area = 2.5e-5; //[m^2]
+	this->Area = 4.9e-5; //[m^2]
 	this->Nvoltas = 50; //
 	this->MAgPerm = 4*3.16159e-7; //[V*s/A*m]
 	this->ADCconst = 10/((2^17)*2e6);
 	this->Ncoils = 12;
 
+//ADC fatores
+this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1e-11 ,0.8583*1e-11 ,0.8590*1e-11 ,0.8616*1e-11 ,0.8610*1e-11 ,0.8580*1e-11 ,0.8608*1e-11 ,0.8576*1e-11 ,0.8653*1e-11 };
+
+	// slopes
+
+	this->slopes = new float*[this->NumberOfProbes];
+	for (i = 0; i<12; i++) {
+		this->slopes[i] = new float[29];
+	}
+
+	float slopes[12][29]={
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }};
+	
 //Inicilaizacao das bases de dados pra substrair fluxo magnetico que vem do vertical,horizontal e primario
 
 	this ->primarydata= (float[10]) { -200,-160,-120,-80,-40,0,40,80,120,160 };//[A]
 	this ->horizontaldata =(float [10]) { -70,-56,-42,-28,-14,0,14,28,42,56 };
 	this ->verticaldata=(float[10]) { -300,-240,-180,-120,-60,0,60,120,180,240 };
+	this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 
 	this ->mirnprim= new float*[12];
 	for(i=0; i<12;i++){
@@ -331,6 +375,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
         this ->mirnvert[i]=new float[10];
         }
 
+	
 
 	float mirnprim_buff[12][10]={
 	{ 0,0,0,0,0,0,0,0,0,0 },
@@ -425,8 +470,19 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	}
 
 	//this->plasma_current_convertion_factor = 4300 * 2.0 * M_PI * this->probe_radius / this->NumberOfMeasurements;
-	this->plasma_current_convertion_factor = this->ADCconst*(2.0 * M_PI * this->probe_radius / this->Ncoils)*(1/(this->MAgPerm*this->Nvoltas*this->Area));
-
+	this->plasma_current_convertion_factor = -1.0*(2.0 * M_PI * this->probe_radius / this->Ncoils)*(1/(this->MAgPerm*this->Nvoltas*this->Area));
+	this->saved_usectime = 0;
+	this->lastmirnov = new float[this->NumberOfProbes];
+	for(i=0;i<this->NumberOfProbes;i++){
+		this->lastmirnov[i] = (float) 0;
+	}	
+	this->mirnovaccumulator = new float[this->NumberOfProbes];
+	for(i=0;i<this->NumberOfProbes;i++){
+		this->mirnovaccumulator[i] = (float) 0;
+	}	
+	this->accumulatorcounter = 0;
+	this->k = 0;
+	this->buff = 0.0;
 	return True;
 }
 //} ******************************************************************
@@ -439,7 +495,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 	this->SignalsInputInterface->Read();
 	OutputInterfaceStruct *outputstruct = (OutputInterfaceStruct *) this->SignalsOutputInterface->Buffer();
 
-	int i,j;
+	int i,j=0;
+	
 	float prim_meas=0.0;
 	float hor_meas=0.0;
 	float vert_meas=0.0;
@@ -461,14 +518,86 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 	prim_meas= inputstruct[0].PrimaryCurrent;
 	hor_meas= inputstruct[0].HorizontalCurrent;
 	vert_meas=inputstruct[0].VerticalCurrent;
+	
+	
 
-	//Apply coil polarity factor - OK
-	for (i = 0; i < this->NumberOfMeasurements; i++) {
-		ADC_values[i] = ADC_values[i] * magnetic_Polarity_calibration[i];
-	}
+	//Apply coil polarity factor - OK ---vamos usar depois, pra calcular posicao e corrente 
+	//for (i = 0; i < this->NumberOfMeasurements; i++) {
+		//ADC_values[i] = ADC_values[i] * magnetic_Polarity_calibration[i];
+	//}
+	
+
+
+	//if(functionNumber == GAMOffline){
+		//if (((uint)inputstruct[0].usectime - this->saved_usectime) > 30000000 || ((uint)inputstruct[0].usectime - this->saved_usectime) < 0 ) {
+			//AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: usectime: %i ", (uint)inputstruct[0].usectime);
+			//slope = ((this->ADC_values[0] - this->lastmirnov[0])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime + 0.1));
+			//AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: usectime: %i, ADC_magnetic_chopper_fp_0 : %i, ADC: %f, slope: %f", (uint)inputstruct[0].usectime,inputstruct[0].ADC_magnetic_chopper_fp_0, ADC_values[0],slope);
+			//this->saved_usectime = (uint)inputstruct[0].usectime;
+			//lastmirnov[0] = ADC_values[0];
+		//}
+		//this->lasttime=inputstruct[0].usectime;
+		//this->k=0;
+	//}
+
+
+
 
 	if (functionNumber == GAMOnline) {
 		// Determine the ADC Module offset "b" as "y(n)=a*n+b"
+		if (((uint)inputstruct[0].usectime - this->lasttime) > 89000000) { // Start averaging 1s before start taking slope averages
+			this->accumulatorcounter++ ;
+			for(i=0;i<this->NumberOfProbes;i++){
+				this->mirnovaccumulator[i] = (mirnovaccumulator[i] * (accumulatorcounter - 1) + ADC_values[i])/accumulatorcounter;
+			}	
+			
+		}
+		
+		if (((uint)inputstruct[0].usectime - this->saved_usectime) > 999900 || ((uint)inputstruct[0].usectime - this->saved_usectime) < 0 ) { //compara um segundo
+			
+			slope = (this->mirnovaccumulator[0] - this->lastmirnov[0]) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime + 0.1));
+
+			//AssertErrorCondition(Information,"MagneticsGAM:: GAMOnline: usectime: %i, ADC_magnetic_chopper_fp_0 : %f, slope: %f", (uint)inputstruct[0].usectime, ADC_values[0],slope);
+									
+			if (((uint)inputstruct[0].usectime - this->lasttime) > 90000000 && ((uint)inputstruct[0].usectime - this->lasttime) < 120000000) {
+				//AssertErrorCondition(Information, "MagneticsGAM:: GAMOnline: sloping it");
+
+				for (i = 0; i < this->NumberOfMeasurements; i++) {
+					
+					//this->slopes[i][k] = ((this->ADC_values[i] - this->lastmirnov[i])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime));
+					this->slopes[i][k] = ((this->mirnovaccumulator[i] - this->lastmirnov[i])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime));
+				}
+				k++;
+				
+				
+				// WO's average
+
+				for (j = 0; j < this->NumberOfMeasurements; j++) {
+					for (i = 0; i < 29; i++) {
+						this->buff = this->buff + this->slopes[j][i];
+					}
+					this -> slope_avrg[j] = this->buff / (29) ;
+					this->buff = 0.0;
+				}
+				
+		
+			}
+			else k=0;
+			
+
+			//for (i = 0; i < this->NumberOfMeasurements; i++) {
+			//	this->lastmirnov[i] = this->ADC_values[i];
+			//}
+			for (i = 0; i < NumberOfMeasurements; i++) {
+				lastmirnov[i] = mirnovaccumulator[i];
+				mirnovaccumulator[i] = (float) 0;
+			}			
+			this->accumulatorcounter = 0;
+			
+			this->saved_usectime = (uint)inputstruct[0].usectime;
+		}
+
+		
 
 		if (inputstruct[0].usectime > 0 && inputstruct[0].usectime < usectime_to_wait_for_starting_operation) {
 
@@ -480,10 +609,48 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			//		this->magnetic_Offset_zero[i] = ADC_values[i] + this->magnetic_Offset_slope[i]; // b = y(-100us) - a*(-100us) = y(10) + a*(1)
 			//	}				
 			//}			
+			
+			
+			
+			
 
 			outputstruct[0].MagneticProbesR = 0.;
 			outputstruct[0].MagneticProbesZ = 0.;
 			outputstruct[0].MagneticProbesPlasmaCurrent = 0.;
+			
+			i=(int)inputstruct[0].usectime/100;
+			if (i==1||i==2||i==3){
+				outputstruct[0].ADC_magnetic_WO_corrctd_0 =  slope_avrg[0]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_1 =  slope_avrg[1]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_2 =  slope_avrg[2]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_3 =  slope_avrg[3]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_4 = slope_avrg[4]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_5 = slope_avrg[5]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_6 = slope_avrg[6]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_7 = slope_avrg[7]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_8 = slope_avrg[8]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_9 = slope_avrg[9]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_10 = slope_avrg[10]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_11 = slope_avrg[11]*1e-10;
+			}
+			else {
+			if (i>28) {i=28;}
+			// esTamos a multiplicar arbitrariamente por 1e-10 para reduzir a ordem de grandeza do sinal
+			outputstruct[0].ADC_magnetic_WO_corrctd_0 = slopes[0][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_1 = slopes[1][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_2 = slopes[2][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_3 = slopes[3][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_4 = slopes[4][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_5 = slopes[5][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_6 = slopes[6][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_7 = slopes[7][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_8 = slopes[8][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_9 = slopes[9][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_10 = slopes[10][i]*1e-10;
+			outputstruct[0].ADC_magnetic_WO_corrctd_11 = slopes[11][i]*1e-10;
+		}
+			
+			
 		}
 		else {
 
@@ -499,6 +666,34 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				corrected_probes[i] = ADC_values[i] - (this->magnetic_Offset_slope[i] * ((inputstruct[0].usectime - usectime_to_wait_for_starting_operation) ) + this->magnetic_Offset_zero[i]);
 			}
+
+			//Correct usign the saved averaged slopes
+
+			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				ADC_WO[i] = ADC_values[i] - this->slope_avrg[i] * ((inputstruct[0].usectime - usectime_to_wait_for_starting_operation)) - this->magnetic_Offset_zero[i];
+			}
+			
+			// [LSB x sample] -> [V x s] or [Wb]    e com polaridade corregida
+
+			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				ADC_WO_Wb[i]=ADC_fact[i]*magnetic_Polarity_calibration[i]*ADC_WO[i];
+				}
+
+
+			//Write the value of the 12 mirnov channel without the WO in Webers and polarity factor corrected
+			outputstruct[0].ADC_magnetic_WO_corrctd_0 = ADC_WO_Wb[0];
+			outputstruct[0].ADC_magnetic_WO_corrctd_1 = ADC_WO_Wb[1];
+			outputstruct[0].ADC_magnetic_WO_corrctd_2 = ADC_WO_Wb[2];
+			outputstruct[0].ADC_magnetic_WO_corrctd_3 = ADC_WO_Wb[3];
+			outputstruct[0].ADC_magnetic_WO_corrctd_4 = ADC_WO_Wb[4];
+			outputstruct[0].ADC_magnetic_WO_corrctd_5 = ADC_WO_Wb[5];
+			outputstruct[0].ADC_magnetic_WO_corrctd_6 = ADC_WO_Wb[6];
+			outputstruct[0].ADC_magnetic_WO_corrctd_7 = ADC_WO_Wb[7];
+			outputstruct[0].ADC_magnetic_WO_corrctd_8 = ADC_WO_Wb[8];
+			outputstruct[0].ADC_magnetic_WO_corrctd_9 = ADC_WO_Wb[9];
+			outputstruct[0].ADC_magnetic_WO_corrctd_10 = ADC_WO_Wb[10];
+			outputstruct[0].ADC_magnetic_WO_corrctd_11 = ADC_WO_Wb[11];
+			
 
 
 			//Search in database of currents the closest value compared with the one measured in primary,vertical and horizontal coils
@@ -574,10 +769,12 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			// Calculate Ip
 			magnetic_field_sum = 0.0;  //this->NumberOfMeasurements
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
-				magnetic_field_sum = corrected_probes[i]+ magnetic_field_sum;
+				magnetic_field_sum = ADC_WO_Wb[i]+ magnetic_field_sum;
 			}
 
 			outputstruct[0].MagneticProbesPlasmaCurrent = magnetic_field_sum*this->plasma_current_convertion_factor;//corrected_probes[11]; 
+
+
 
 																			
 			// Estimate radial_position and vertical_position
@@ -638,7 +835,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 		}
 	}
-	else {
+	else {		// GAMOffline & others
 		//this->n_samples = 0;
 		//for(i = 0 ; i < (this->NumberOfMeasurements) ; i++){
 		//	this->magnetic_Offset_zero[i] = 0;
@@ -646,6 +843,36 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 		outputstruct[0].MagneticProbesPlasmaCurrent = 0;
 		outputstruct[0].MagneticProbesR = 0;
 		outputstruct[0].MagneticProbesZ = 0;
+		
+		outputstruct[0].ADC_magnetic_WO_corrctd_0 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_1 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_2 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_3 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_4 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_5 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_6 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_7 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_8 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_9 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_10 = 0.;
+		outputstruct[0].ADC_magnetic_WO_corrctd_11 = 0.;
+		
+		if (((uint)inputstruct[0].usectime - this->saved_usectime) > 30000000 || ((uint)inputstruct[0].usectime - this->saved_usectime) < 0 ) {
+			AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: usectime: %i ", (uint)inputstruct[0].usectime);
+			slope = ((this->ADC_values[0] - this->lastmirnov[0])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime + 0.1));
+			AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: usectime: %i, ADC_magnetic_chopper_fp_0 : %i, ADC: %f, slope: %f", (uint)inputstruct[0].usectime,inputstruct[0].ADC_magnetic_chopper_fp_0, ADC_values[0],slope);
+			lastmirnov[0] = ADC_values[0];
+		}
+		this->lasttime=inputstruct[0].usectime;
+		this->k=0;
+		this->saved_usectime = (uint)inputstruct[0].usectime;
+		
+		for (i = 0; i < this->NumberOfMeasurements; i++) {
+				this->lastmirnov[i] = this->ADC_values[i];
+			}
+		this->mirnovaccumulator = (float[12]) {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+		this->accumulatorcounter = 0;
+
 	}
 
 	this->SignalsOutputInterface->Write();
@@ -657,7 +884,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 bool MagneticsGAM::ProcessHttpMessage(HttpStream &hStream) {
 
 	HtmlStream hmStream(hStream);
-	int i;
+	int i,j;
 	hmStream.SSPrintf(HtmlTagStreamMode, "html>\n\
 		<head>\n\
 		<title>%s</title>\n\
@@ -718,6 +945,16 @@ bool MagneticsGAM::ProcessHttpMessage(HttpStream &hStream) {
 		hmStream.SSPrintf(HtmlTagStreamMode, "table border=\"1\"><tr><td>magnetic_Polarity_calibration</td");
 		for (i = 0; i<NumberOfModules; i++)hmStream.SSPrintf(HtmlTagStreamMode, "td>%.2f</td", magnetic_Polarity_calibration[i]);
 		hmStream.SSPrintf(HtmlTagStreamMode, "/tr></table><br");
+		
+		
+		for (j = 0; j < this->NumberOfMeasurements; j++) {
+			hmStream.SSPrintf(HtmlTagStreamMode, "table border=\"1\"><tr><td>Calibration mirnov %d </td", j);
+				for (i = 0; i < 29; i++) {
+					hmStream.SSPrintf(HtmlTagStreamMode, "td>%.4f</td", slopes[j][i]);
+				}
+				hmStream.SSPrintf(HtmlTagStreamMode, "/tr><tr><td>Average: %.4f</td", slope_avrg[j]);
+				hmStream.SSPrintf(HtmlTagStreamMode, "/tr></table><br");
+		}
 	}
 	hmStream.SSPrintf(HtmlTagStreamMode, "/form");
 
