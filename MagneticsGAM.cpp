@@ -352,7 +352,28 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }};
 	
-//Inicilaizacao das bases de dados pra substrair fluxo magnetico que vem do vertical,horizontal e primario
+//External fluxes subtraction
+	//Let load initial conditions of the state space models (prim and vert 1 state, hor 4 states) in the state vectors
+	
+	this ->x_prim=(float[12]){};
+	this ->x_vert=(float[12]){};
+	this->x_hor= new float*[12];
+	for (i = 0; i<12; i++) {
+		this->slopes[i] = new float[4];
+	}
+	float x0_hor[12][4]={{-0.0003   -0.0013   -0.0116   -0.0028  },
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},
+			     {},};
+	
 
 	this ->primarydata= (float[10]) { -200,-160,-120,-80,-40,0,40,80,120,160 };//[A]
 	this ->horizontaldata =(float [10]) { -70,-56,-42,-28,-14,0,14,28,42,56 };
@@ -694,7 +715,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].ADC_magnetic_WO_corrctd_10 = ADC_WO_Wb[10];
 			outputstruct[0].ADC_magnetic_WO_corrctd_11 = ADC_WO_Wb[11];
 			
-
+			// Substracted external fluxes from primary, vertical and horizontal
 
 			//Search in database of currents the closest value compared with the one measured in primary,vertical and horizontal coils
 			// and then..... Search in database magneticflux of each mirnov coil due to primary,horizontal & vertical coils
