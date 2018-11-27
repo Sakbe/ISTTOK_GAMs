@@ -374,7 +374,20 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			     {0,0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
-			     {0,0,0,0}};			
+			     {0,0,0,0}};
+			     
+	 float X_hor_buff[12][4]={{0,0,0,0 },
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0}}	;		
 			
 			
 		// Load A matrices
@@ -443,10 +456,14 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			     {0,0,0,0},
 			     {0,0,0,0}};
 
-// Initialization of outputs
+// Initialization of outputs adn other signals
 	this ->y_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this ->y_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->y_hor=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this->ADC_ext_flux=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this->ADC_final=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	
+	
 //////////////////////////////////////////////////////////////////////////////////
 	this->radial_coeficients = new float[this->NumberOfProbes];
 	this->vertical_coeficients = new float[this->NumberOfProbes];
@@ -712,11 +729,19 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				y_hor[i]=C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3]+C_hor[i][4]*x_hor[i][4];
-				
+				for (j=0; j< 4; j++){
+					x_hor_buff[i][j]=x_hor[i][j];}
+			x_hor[i][1]=A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+A_hor[i][1][4]*x_hor_buff[i][4]+B_hor[i][1]*hor_meas;				
+			x_hor[i][2]=A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+A_hor[i][2][4]*x_hor_buff[i][4]+B_hor[i][2]*hor_meas;				
+			x_hor[i][3]=A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+A_hor[i][3][4]*x_hor_buff[i][4]+B_hor[i][3]*hor_meas;				
+			x_hor[i][4]=A_hor[i][4][1]*x_hor_buff[i][1]+A_hor[i][4][2]*x_hor_buff[i][2]+A_hor[i][4][3]*x_hor_buff[i][3]+A_hor[i][4][4]*x_hor_buff[i][4]+B_hor[i][4]*hor_meas;				
 				}	
+				
+				
 			
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				ADC_ext_flux[i]=y_prim[i]+y_vert[i]+y_hor[i];
+				ADC_final[i]=ADC_WO_Wb[i]-ADC_ext_flux[i];
 				}
 			
 

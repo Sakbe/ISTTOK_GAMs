@@ -93,6 +93,7 @@ private:
 	float *x_prim;
 	float *x_vert;
 	float **x_hor;
+	float **x_hor_buff;
 	
 	float *A_prim;
 	float *A_vert;
@@ -111,7 +112,8 @@ private:
 	float *y_hor;
 	// Sinal Reconstruido a partir dos fluxos externos
 	float *ADC_ext_flux;
-	
+	// Sinal das mirnov sem a contribuição dos campos externos
+	float *ADC_final;
 	
 
 	// Picked values of magneticflux in databases for substraction
