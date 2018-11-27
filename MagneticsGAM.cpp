@@ -351,32 +351,35 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }};
+			
+			
+///////////////// External fluxes subtraction!!!!!!  /////////////////////////// 
+	//Lets load initial conditions of the state space models (prim and vert 1 state, hor 4 states) in the state vectors
 	
-//External fluxes subtraction
-	//Let load initial conditions of the state space models (prim and vert 1 state, hor 4 states) in the state vectors
-	
-/*	this ->x_prim=(float[12]){};
-	this ->x_vert=(float[12]){};
+	this ->x_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->x_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	
 	this->x_hor= new float*[12];
 	for (i = 0; i<12; i++) {
 		this->x_hor[i] = new float[4];
 	}
-	float x_hor[12][4]={{-0.0003   -0.0013   -0.0116   -0.0028  },
-			     {},
-			     {},
-			     {},
-			     {},
-			     {},
-			     {},
-			     {},
-			     {},
-			     {},
-			     {},
-			     {}};*/
-
-	\\ Load A matrices
-		
+	float x_hor[12][4]={{-0.0003,-0.0013 ,-0.0116,-0.0028  },
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0}};			
+			
+			
+		// Load A matrices
+		this ->A_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+		this ->A_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};		
 		this->A_hor= new float**[12]();
 	for (i = 0; i<12; i++) {
 		this->A_hor[i] = new float*[4]();
@@ -398,106 +401,53 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			   	  { {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}	},
 			 	  { {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}	} };
 	
-	
-	
-	
-	
-	
 
-	this ->primarydata= (float[10]) { -200,-160,-120,-80,-40,0,40,80,120,160 };//[A]
-	this ->horizontaldata =(float [10]) { -70,-56,-42,-28,-14,0,14,28,42,56 };
-	this ->verticaldata=(float[10]) { -300,-240,-180,-120,-60,0,60,120,180,240 };
-	this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
-
-	this ->mirnprim= new float*[12];
-	for(i=0; i<12;i++){
-    	this ->mirnprim[i]=new float[10];
+//Load B matrices
+	this ->B_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->B_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this->B_hor= new float*[12];
+	for (i = 0; i<12; i++) {
+		this->B_hor[i] = new float[4];
 	}
+	float B_hor[12][4]={{0,0,0,0  },
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0}};
 
 
-	this ->mirnhor= new float*[12];
-        for(i=0; i<12;i++){
-        this ->mirnhor[i]=new float[10];
-        }
-	
-	 this ->mirnvert= new float*[12];
-        for(i=0; i<12;i++){
-        this ->mirnvert[i]=new float[10];
-        }
+//Load C matrices
+	this ->C_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->C_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->C_hor= new float*[12];
+	for (i = 0; i<12; i++) {
+		this->C_hor[i] = new float[4];
+	}
+	float C_hor[12][4]={{0,0,0,0 },
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0},
+			     {0,0,0,0}};
 
-	
-
-	float mirnprim_buff[12][10]={
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0 }};
-
-
-
-	float mirnhor_buff[12][10] ={ 
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 }};
-
-	float mirnvert_buff[12][10] ={ 
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0 }};
-
-
-
-
-	for(i=0;i<12;i++){
-		for(j=0;j<10;j++){
-
-		mirnprim[i][j]=mirnprim_buff[i][j];
-	}}
-
-	for(i=0;i<12;i++){
-                for(j=0;j<10;j++){
-
-                mirnhor[i][j]=mirnhor_buff[i][j];
-        }}
-
-	for(i=0;i<12;i++){
-                for(j=0;j<10;j++){
-
-                mirnvert[i][j]=mirnvert_buff[i][j];
-        }}
-
-
-
-
-
-
-
+// Initialization of outputs
+	this ->y_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->y_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this->y_hor=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+//////////////////////////////////////////////////////////////////////////////////
 	this->radial_coeficients = new float[this->NumberOfProbes];
 	this->vertical_coeficients = new float[this->NumberOfProbes];
 	for (i = 0; i < this->NumberOfProbes; i++) {
@@ -744,70 +694,30 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].ADC_magnetic_WO_corrctd_10 = ADC_WO_Wb[10];
 			outputstruct[0].ADC_magnetic_WO_corrctd_11 = ADC_WO_Wb[11];
 			
-			// Substracted external fluxes from primary, vertical and horizontal
 
-			//Search in database of currents the closest value compared with the one measured in primary,vertical and horizontal coils
-			// and then..... Search in database magneticflux of each mirnov coil due to primary,horizontal & vertical coils
-			for (j = 0; j < 10; j++) {
-				//primary
-				if(this ->primarydata[j]==prim_meas)
-				{
-					for (i = 0; i < this->NumberOfMeasurements; i++) {
-						allmirnv_prim[i] = this->mirnprim[i][j];
-					}
-					j = 10;
+
+			//Compute fluxes to be substracted (Discrete State-Space equations)
+			
+				
+				
+			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				y_prim[i]=C_prim[i]*x_prim[i];
+				x_prim[i]=A_prim[i]*x_prim[i]+B_prim[i]*prim_meas;
 				}
 
-				if (this->primarydata[j] > prim_meas)
-				{
-					for (i = 0; i < this->NumberOfMeasurements; i++) {
-						allmirnv_prim[i] = this->mirnprim[i][j - 1];
-					}
-					
-					j = 10;
-				}
-				// horizzontal
-
-				if (this->horizontaldata[j] == hor_meas)
-				{
-					for (i = 0; i < this->NumberOfMeasurements; i++) {
-						allmirnv_hor[i] = this->mirnhor[i][j];
-					}
-					j = 10;
+			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				y_vert[i]=C_vert[i]*x_vert[i];
+				x_vert[i]=A_vert[i]*x_vert[i]+B_vert[i]*vert_meas;
 				}
 
-				if (this->horizontaldata[j] > hor_meas)
-				{
-					for (i = 0; i < this->NumberOfMeasurements; i++) {
-						allmirnv_hor[i] = this->mirnhor[i][j - 1];
-					}
-
-					j = 10;
+			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				y_hor[i]=C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3]+C_hor[i][4]*x_hor[i][4];
+				
+				}	
+			
+			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				ADC_ext_flux[i]=y_prim[i]+y_vert[i]+y_hor[i];
 				}
-
-
-
-				// vertical
-
-				if (this->verticaldata[j] == vert_meas)
-				{
-					for (i = 0; i < this->NumberOfMeasurements; i++) {
-						allmirnv_vert[i] = this->mirnvert[i][j];
-					}
-					j = 10;
-				}
-
-				if (this->verticaldata[j] > vert_meas)
-				{
-					for (i = 0; i < this->NumberOfMeasurements; i++) {
-						allmirnv_vert[i] = this->mirnvert[i][j - 1];
-					}
-
-					j = 10;
-				}
-
-			}
-///////////////////////end of selection from the database
 			
 
 

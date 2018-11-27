@@ -87,22 +87,38 @@ private:
 	float *slope_avrg;
 	float *ADC_fact;
 	float *ADC_WO_Wb;
+	
+	
+	//Cenas pra os modelos em espaço de estados
+	float *x_prim;
+	float *x_vert;
+	float **x_hor;
+	
+	float *A_prim;
+	float *A_vert;
+	float ***A_hor;
+	
+	float *B_prim;
+	float *B_vert;
+	float **B_hor;
+	
+	float *C_prim;
+	float *C_vert;
+	float **C_hor;
+	
+	float *y_prim;
+	float *y_vert;
+	float *y_hor;
+	// Sinal Reconstruido a partir dos fluxos externos
+	float *ADC_ext_flux;
+	
+	
 
 	// Picked values of magneticflux in databases for substraction
 	float *allmirnv_prim;
 	float *allmirnv_hor;
 	float *allmirnv_vert;
 	
-
-	// Arrays with mirnov magneticflux from primary, vertical and horizontal currents (database)
-	float *primarydata; //[A]
-	float *horizontaldata;
-	float *verticaldata;
-	float **mirnprim;
-	
-	float **mirnhor;
-
-	float **mirnvert;
 	
 
 		////////////////////////////////////////////////////////////
