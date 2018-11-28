@@ -63,6 +63,8 @@ private:
 	int accumulatorcounter;
 	float buff;
 	int k;
+	int i;
+	int j;
 	int usectime_to_wait_for_starting_operation;
 	bool magnetic_radial_bool;
 	bool magnetic_vertical_bool;
@@ -121,7 +123,11 @@ private:
 	float *allmirnv_hor;
 	float *allmirnv_vert;
 	
+	// cenas pràs correntes
 	
+	float prim_meas;
+	float hor_meas;
+	float vert_meas;
 
 		////////////////////////////////////////////////////////////
 

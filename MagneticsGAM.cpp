@@ -332,6 +332,9 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1e-11 ,0.8583*1e-11 ,0.8590*1e-11 ,0.8616*1e-11 ,0.8610*1e-11 ,0.8580*1e-11 ,0.8608*1e-11 ,0.8576*1e-11 ,0.8653*1e-11 };
 
 	// slopes
+	
+	
+this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 
 	this->slopes = new float*[this->NumberOfProbes];
 	for (i = 0; i<12; i++) {
@@ -352,6 +355,11 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }};
 			
+	
+	// Inicilização valores das correntes
+	float prim_meas=0.0;
+	float hor_meas=0.0;
+	float vert_meas=0.0;
 			
 ///////////////// External fluxes subtraction!!!!!!  /////////////////////////// 
 	//Lets load initial conditions of the state space models (prim and vert 1 state, hor 4 states) in the state vectors
@@ -376,7 +384,12 @@ this->ADC_fact = (float[12]) {0.8605*1e-11 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1
 			     {0,0,0,0},
 			     {0,0,0,0}};
 			     
-	 float X_hor_buff[12][4]={{0,0,0,0 },
+		this->x_hor_buff= new float*[12];
+		for (i = 0; i<12; i++) {
+		this->x_hor_buff[i] = new float[4];
+		}
+			     
+	 float x_hor_buff[12][4]={{0,0,0,0 },
 			     {0,0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
@@ -512,11 +525,9 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 	this->SignalsInputInterface->Read();
 	OutputInterfaceStruct *outputstruct = (OutputInterfaceStruct *) this->SignalsOutputInterface->Buffer();
 
-	int i,j=0;
 	
-	float prim_meas=0.0;
-	float hor_meas=0.0;
-	float vert_meas=0.0;
+	
+	
 
 	ADC_values[0] = (float)inputstruct[0].ADC_magnetic_chopper_fp_0;
 	ADC_values[1] = (float)inputstruct[0].ADC_magnetic_chopper_fp_1;
@@ -715,7 +726,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			//Compute fluxes to be substracted (Discrete State-Space equations)
 			
-				
+			
 				
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				y_prim[i]=C_prim[i]*x_prim[i];
@@ -729,12 +740,12 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				y_hor[i]=C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3]+C_hor[i][4]*x_hor[i][4];
-				for (j=0; j< 4; j++){
-					x_hor_buff[i][j]=x_hor[i][j];}
-			x_hor[i][1]=A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+A_hor[i][1][4]*x_hor_buff[i][4]+B_hor[i][1]*hor_meas;				
-			x_hor[i][2]=A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+A_hor[i][2][4]*x_hor_buff[i][4]+B_hor[i][2]*hor_meas;				
-			x_hor[i][3]=A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+A_hor[i][3][4]*x_hor_buff[i][4]+B_hor[i][3]*hor_meas;				
-			x_hor[i][4]=A_hor[i][4][1]*x_hor_buff[i][1]+A_hor[i][4][2]*x_hor_buff[i][2]+A_hor[i][4][3]*x_hor_buff[i][3]+A_hor[i][4][4]*x_hor_buff[i][4]+B_hor[i][4]*hor_meas;				
+			//	for (j=0; j< 4; j++){
+				//	x_hor_buff[i][j]=x_hor[i][j];}
+			x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;				
+			x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;				
+			x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;				
+			x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;				
 				}	
 				
 				
