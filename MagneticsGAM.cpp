@@ -739,22 +739,22 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				}
 
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
-				y_hor[i]=C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3]+C_hor[i][4]*x_hor[i][4];
-			//	for (j=0; j< 4; j++){
-				//	x_hor_buff[i][j]=x_hor[i][j];}
-			x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;				
-			x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;				
-			x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;				
-			x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;				
+				y_hor[i]=C_hor[i][0]*x_hor[i][0]+C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3];
+				for (j=0; j< 4; j++){
+					x_hor_buff[i][j]=x_hor[i][j];}
+	//		x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;				
+	//		x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;				
+	//		x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;				
+	//		x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;				
 				}	
 				
 				
-			
+		/*	
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				ADC_ext_flux[i]=y_prim[i]+y_vert[i]+y_hor[i];
 				ADC_final[i]=ADC_WO_Wb[i]-ADC_ext_flux[i];
 				}
-			
+			*/
 
 
 			//Substract from corrected_probes magnetic flu values due to the Vertical, Horizontal and Primary coils
