@@ -112,6 +112,7 @@ private:
 	float *y_prim;
 	float *y_vert;
 	float *y_hor;
+	float y_buff;
 	// Sinal Reconstruido a partir dos fluxos externos
 	float *ADC_ext_flux;
 	// Sinal das mirnov sem a contribuição dos campos externos

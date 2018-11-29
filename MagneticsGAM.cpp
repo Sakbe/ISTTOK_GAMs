@@ -472,10 +472,10 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 // Initialization of outputs adn other signals
 	this ->y_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this ->y_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	this->y_hor=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->y_hor=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->ADC_ext_flux=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->ADC_final=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	
+//		this->y_buff = 0.0;
 	
 //////////////////////////////////////////////////////////////////////////////////
 	this->radial_coeficients = new float[this->NumberOfProbes];
@@ -727,26 +727,39 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			//Compute fluxes to be substracted (Discrete State-Space equations)
 			
 			
-				
+
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				y_prim[i]=C_prim[i]*x_prim[i];
 				x_prim[i]=A_prim[i]*x_prim[i]+B_prim[i]*prim_meas;
-				}
-
-			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				
 				y_vert[i]=C_vert[i]*x_vert[i];
 				x_vert[i]=A_vert[i]*x_vert[i]+B_vert[i]*vert_meas;
+				
+	//			y_hor[i]=0.0;
 				}
-
-			for (i = 0; i < this->NumberOfMeasurements; i++) {
-				y_hor[i]=C_hor[i][0]*x_hor[i][0]+C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3];
+				
+	/*			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				for (j=0; j< 4; j++){
-					x_hor_buff[i][j]=x_hor[i][j];}
+				//	 y_hor[i]=C_hor[i][j]*x_hor[i][j]+y_hor[i];
+				//	this->y_buff=this->y_buff+this->C_hor[i][j];
+				//	 x_hor_buff[i][j]= this->x_hor[i][j];
+				}
+				//y_buff=0.0;
+				}
+				
+*/
+	//		for (i = 0; i < this->NumberOfMeasurements; i++) {
+				//y_hor[i]=C_hor[i][0]*x_hor[i][0]+C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3];
+	//			this-> y_hor[i]=0;
+	//			for (j=0; j< 4; j++){
+	//				this->y_hor[i]=this->C_hor[i][j]*this->x_hor[i][j]+this->y_hor[i];
+	//				x_hor_buff[i][j]=x_hor[i][j];
+	//								}
 	//		x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;				
 	//		x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;				
 	//		x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;				
 	//		x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;				
-				}	
+	//			}	
 				
 				
 		/*	
@@ -757,10 +770,16 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			*/
 
 
+
+
+/*
 			//Substract from corrected_probes magnetic flu values due to the Vertical, Horizontal and Primary coils
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				corrected_probes[i] = corrected_probes[i]-allmirnv_vert[i]-allmirnv_hor[i]-allmirnv_prim[i];
 			}
+			*/
+			
+			
 
 			// Calculate Ip
 			magnetic_field_sum = 0.0;  //this->NumberOfMeasurements
