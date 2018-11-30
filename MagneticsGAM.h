@@ -96,6 +96,7 @@ private:
 	float *x_vert;
 	float **x_hor;
 	float **x_hor_buff;
+	float x_hor_cpy;
 	
 	float *A_prim;
 	float *A_vert;

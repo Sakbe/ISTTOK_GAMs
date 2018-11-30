@@ -363,9 +363,10 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 			
 ///////////////// External fluxes subtraction!!!!!!  /////////////////////////// 
 	//Lets load initial conditions of the state space models (prim and vert 1 state, hor 4 states) in the state vectors
+	this ->x_prim=(float[12]){0.0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->x_vert=(float[12]){0.0,0,0,0,0,0,0,0,0,0,0,0};
 	
-	this ->x_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	this ->x_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this -> x_hor_cpy=0.0;
 	
 	this->x_hor= new float*[12];
 	for (i = 0; i<12; i++) {
@@ -389,7 +390,7 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 		this->x_hor_buff[i] = new float[4];
 		}
 			     
-	 float x_hor_buff[12][4]={{0,0,0,0 },
+	 float x_hor_buff[12][4]={{-0.0003,-0.0013 ,-0.0116,-0.0028  },
 			     {0,0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
@@ -404,8 +405,8 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 			
 			
 		// Load A matrices
-		this ->A_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-		this ->A_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};		
+		this ->A_prim=(float[12]){0.0,0,0,0,0,0,0,0,0,0,0,0};
+		this ->A_vert=(float[12]){0.0,0,0,0,0,0,0,0,0,0,0,0};		
 		this->A_hor= new float**[12]();
 	for (i = 0; i<12; i++) {
 		this->A_hor[i] = new float*[4]();
@@ -429,13 +430,13 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 	
 
 //Load B matrices
-	this ->B_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	this ->B_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->B_prim=(float[12]){0.0,0.0,0,0,0,0,0,0,0,0,0,0};
+	this ->B_vert=(float[12]){0.0,0,0,0,0,0,0,0,0,0,0,0};
 	this->B_hor= new float*[12];
 	for (i = 0; i<12; i++) {
 		this->B_hor[i] = new float[4];
 	}
-	float B_hor[12][4]={{0,0,0,0  },
+	float B_hor[12][4]={{0.0,0.0,0.0,0  },
 			     {0,0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
@@ -450,33 +451,42 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 
 
 //Load C matrices
-	this ->C_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	this ->C_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->C_prim=(float[12]){0.0,0,0,0,0,0,0,0,0,0,0,0};
+	this ->C_vert=(float[12]){0.0,0.0,0,0,0,0,0,0,0,0,0,0};
 	this ->C_hor= new float*[12];
 	for (i = 0; i<12; i++) {
 		this->C_hor[i] = new float[4];
 	}
-	float C_hor[12][4]={{0,0,0,0 },
+	float C_hor[12][4]={{0.0,0,0,0 },
+			     {0.0,0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
+			     {0,0,0.0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
+			     {0,0.0,0,0},
 			     {0,0,0,0},
 			     {0,0,0,0},
-			     {0,0,0,0},
-			     {0,0,0,0},
-			     {0,0,0,0},
-			     {0,0,0,0}};
+			     {0,0,0.0,0}};
 
 // Initialization of outputs adn other signals
-	this ->y_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	this ->y_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
-	this ->y_hor=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+//	this ->y_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+//	this ->y_vert=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+//	this ->y_hor=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->ADC_ext_flux=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->ADC_final=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 //		this->y_buff = 0.0;
 	
+		this->y_vert= new float[this->NumberOfProbes];
+		this->y_prim= new float[this->NumberOfProbes];
+		this->y_hor= new float[this->NumberOfProbes];
+		
+for (i = 0; i < this->NumberOfProbes; i++) {
+		this->y_vert[i] = 0.0;
+		this->y_hor[i] = 0.0;
+		this->y_prim[i] = 0.0;}
+
 //////////////////////////////////////////////////////////////////////////////////
 	this->radial_coeficients = new float[this->NumberOfProbes];
 	this->vertical_coeficients = new float[this->NumberOfProbes];
@@ -513,6 +523,7 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 	this->accumulatorcounter = 0;
 	this->k = 0;
 	this->buff = 0.0;
+	
 	return True;
 }
 //} ******************************************************************
@@ -729,26 +740,35 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			
 
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
-				y_prim[i]=C_prim[i]*x_prim[i];
-				x_prim[i]=A_prim[i]*x_prim[i]+B_prim[i]*prim_meas;
+				 this ->y_prim[i]= this ->C_prim[i]* this ->x_prim[i];
+//				x_prim[i]=A_prim[i]*x_prim[i]+B_prim[i]*prim_meas;
 				
-				y_vert[i]=C_vert[i]*x_vert[i];
-				x_vert[i]=A_vert[i]*x_vert[i]+B_vert[i]*vert_meas;
+//				y_vert[i]=C_vert[i]*x_vert[i];
+//				x_vert[i]=A_vert[i]*x_vert[i]+B_vert[i]*vert_meas;
 				
-	//			y_hor[i]=0.0;
+				this -> y_hor[i]=0.0;
 				}
 				
-	/*			for (i = 0; i < this->NumberOfMeasurements; i++) {
+				for (i = 0; i < this->NumberOfMeasurements; i++) {
 				for (j=0; j< 4; j++){
-				//	 y_hor[i]=C_hor[i][j]*x_hor[i][j]+y_hor[i];
+				//	 y_hor[i] += C_hor[i][j]*x_hor[i][j];
 				//	this->y_buff=this->y_buff+this->C_hor[i][j];
-				//	 x_hor_buff[i][j]= this->x_hor[i][j];
-				}
+					 this -> x_hor_cpy= this->x_hor[i][j];
+					 this -> x_hor_buff[i][j]=  this -> x_hor_cpy;
+			}
 				//y_buff=0.0;
 				}
-				
-*/
-	//		for (i = 0; i < this->NumberOfMeasurements; i++) {
+//				
+/*			for (i = 0; i < this->NumberOfMeasurements; i++) {
+					for (j=0; j< 4; j++){
+						for (k=0; k< 4; k++){
+						x_hor[i][j] +=A[i][j][k]*x_hor_buff[i][j];
+												}
+						x_hor[i][j]=x_hor[i][j]+B[i][j]*hormeas;
+										}
+															}
+															
+*/	//		for (i = 0; i < this->NumberOfMeasurements; i++) {
 				//y_hor[i]=C_hor[i][0]*x_hor[i][0]+C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3];
 	//			this-> y_hor[i]=0;
 	//			for (j=0; j< 4; j++){
