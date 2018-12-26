@@ -52,6 +52,36 @@ private:
 		float ADC_magnetic_WO_corrctd_9;
 		float ADC_magnetic_WO_corrctd_10;
 		float ADC_magnetic_WO_corrctd_11;
+		// Mirnov coil measurements without the effect from the external fields
+		float Magnetics_corrctd_0;
+		float Magnetics_corrctd_1;
+		float Magnetics_corrctd_2;
+		float Magnetics_corrctd_3;
+		float Magnetics_corrctd_4;
+		float Magnetics_corrctd_5;
+		float Magnetics_corrctd_6;
+		float Magnetics_corrctd_7;
+		float Magnetics_corrctd_8;
+		float Magnetics_corrctd_9;
+		float Magnetics_corrctd_10;
+		float Magnetics_corrctd_11;
+		// Extracted signals reconstructed from the PS measurements
+		float Magnetics_ext_flux_0;
+		float Magnetics_ext_flux_1;
+		float Magnetics_ext_flux_2;
+		float Magnetics_ext_flux_3;
+		float Magnetics_ext_flux_4;
+		float Magnetics_ext_flux_5;
+		float Magnetics_ext_flux_6;
+		float Magnetics_ext_flux_7;
+		float Magnetics_ext_flux_8;
+		float Magnetics_ext_flux_9;
+		float Magnetics_ext_flux_10;
+		float Magnetics_ext_flux_11;
+		// Radial and vertical position and plasma current with flux corrections
+		float Magnetics_R_corrctd;
+		float Magnetics_z_corrctd;
+		float Magnetics_Ip_corrctd;
 
 	};
 
