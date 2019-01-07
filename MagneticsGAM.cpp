@@ -254,6 +254,33 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	CDB_move_to[12].Printf("ADC_magnetic_WO_corrctd_9");
 	CDB_move_to[13].Printf("ADC_magnetic_WO_corrctd_10");
 	CDB_move_to[14].Printf("ADC_magnetic_WO_corrctd_11");
+	CDB_move_to[15].Printf("Magnetics_flux_corrctd_0");
+	CDB_move_to[16].Printf("Magnetics_flux_corrctd_1");
+	CDB_move_to[17].Printf("Magnetics_flux_corrctd_2");
+	CDB_move_to[18].Printf("Magnetics_flux_corrctd_3");
+	CDB_move_to[19].Printf("Magnetics_flux_corrctd_4");
+	CDB_move_to[20].Printf("Magnetics_flux_corrctd_5");
+	CDB_move_to[21].Printf("Magnetics_flux_corrctd_6");
+	CDB_move_to[22].Printf("Magnetics_flux_corrctd_7");
+	CDB_move_to[23].Printf("Magnetics_flux_corrctd_8");
+	CDB_move_to[24].Printf("Magnetics_flux_corrctd_9");
+	CDB_move_to[25].Printf("Magnetics_flux_corrctd_10");
+	CDB_move_to[26].Printf("Magnetics_flux_corrctd_11");
+	CDB_move_to[27].Printf("Magnetics_ext_flux_0");
+	CDB_move_to[28].Printf("Magnetics_ext_flux_1");
+	CDB_move_to[29].Printf("Magnetics_ext_flux_2");
+	CDB_move_to[30].Printf("Magnetics_ext_flux_3");
+	CDB_move_to[31].Printf("Magnetics_ext_flux_4");
+	CDB_move_to[32].Printf("Magnetics_ext_flux_5");
+	CDB_move_to[33].Printf("Magnetics_ext_flux_6");
+	CDB_move_to[34].Printf("Magnetics_ext_flux_7");
+	CDB_move_to[35].Printf("Magnetics_ext_flux_8");
+	CDB_move_to[36].Printf("Magnetics_ext_flux_9");
+	CDB_move_to[37].Printf("Magnetics_ext_flux_10");
+	CDB_move_to[38].Printf("Magnetics_ext_flux_11");
+	CDB_move_to[39].Printf("Magnetics_R_corrctd");
+	CDB_move_to[40].Printf("Magnetics_z_corrctd");
+	CDB_move_to[41].Printf("agnetics_Ip_corrctd");
 
 	for (i = 0; i<number_of_signals_to_read; i++) {
 
