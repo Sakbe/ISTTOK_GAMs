@@ -7,6 +7,7 @@
 #include "DDBOutputInterface.h"
 #include "GAM.h"
 #include "HtmlStream.h"
+#include "Matrix.h"
 
 OBJECT_DLL(MagneticsGAM)
 
@@ -95,6 +96,8 @@ private:
 	int k;
 	int i;
 	int j;
+	int m;
+	int doonce;
 	int usectime_to_wait_for_starting_operation;
 	bool magnetic_radial_bool;
 	bool magnetic_vertical_bool;
@@ -127,6 +130,8 @@ private:
 	float **x_hor;
 	float **x_hor_buff;
 	float x_hor_cpy;
+	float *x_hor_vec;
+	
 	
 	float *A_prim;
 	float *A_vert;
@@ -138,12 +143,15 @@ private:
 	
 	float *C_prim;
 	float *C_vert;
-	float **C_hor;
-	
+	float ** C_hor;
+	float *C_hor_vec;
+	//MatrixT<float>C_hor;
+	//float C_hor[][];
 	float *y_prim;
 	float *y_vert;
 	float *y_hor;
 	float y_buff;
+	float y_buff2;
 	// Sinal Reconstruido a partir dos fluxos externos
 	float *ADC_ext_flux;
 	// Sinal das mirnov sem a contribuição dos campos externos
