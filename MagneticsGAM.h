@@ -131,15 +131,18 @@ private:
 	float **x_hor_buff;
 	float x_hor_cpy;
 	float *x_hor_vec;
+	float *x_hor_vec_cpy;
 	
 	
 	float *A_prim;
 	float *A_vert;
 	float ***A_hor;
+	float *A_hor_vec;
 	
 	float *B_prim;
 	float *B_vert;
 	float **B_hor;
+	float *B_hor_vec;
 	
 	float *C_prim;
 	float *C_vert;
