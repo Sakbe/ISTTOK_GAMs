@@ -322,8 +322,8 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	this->ADC_values = new float[this->NumberOfProbes];
 	this->ADC_WO = new float[this->NumberOfProbes];
 	this->ADC_WO_Wb = new float[this->NumberOfProbes];
-	
-	
+
+
 	this->corrected_probes = new float[this->NumberOfMeasurements];
 	this->magnetic_Offset_zero = new float[this->NumberOfModules];
 	for (i = 0; i < this->NumberOfProbes; i++) {
@@ -360,7 +360,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 //ADC fatores
 this->ADC_fact = (float[12]) {0.8605 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1e-11 ,0.8583*1e-11 ,0.8590*1e-11 ,0.8616*1e-11 ,0.8610*1e-11 ,0.8580*1e-11 ,0.8608*1e-11 ,0.8576*1e-11 ,0.8653*1e-11 };
 			AssertErrorCondition(Information,"MagneticsGAM:: Initialise: ADC_fact[5]: ");
-			
+
 			//AssertErrorCondition(Information, "MagneticsGAM::Initialise: magnetic_Polarity_calibration[%d] = %f", i, magnetic_Polarity_calibration[i]);
 
 
@@ -373,8 +373,8 @@ this->ADC_fact = (float[12]) {0.8605 ,0.8582*1e-11 ,0.8518*1e-11 ,0.8633*1e-11 ,
 
 
 /////////////////// slopes
-	
-	
+
+
 this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 
 	this->slopes = new float*[this->NumberOfProbes];
@@ -395,16 +395,16 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 			{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }};
-			
-	
+
+
 	// Inicilização valores das correntes
 	float prim_meas=0.0;
 	float hor_meas=0.0;
 	float vert_meas=0.0;
-			
-///////////////// External fluxes subtraction!!!!!!  /////////////////////////// 
+
+///////////////// External fluxes subtraction!!!!!!  ///////////////////////////
 	//Lets load initial conditions of the state space models (prim and vert 1 state, hor 4 states) in the state vectors
-	this ->x_prim=(float[12]){-4.2670*1e-6,	-3.6560*1e-5, 9.6572*1e-5,	-3.9196*1e-4,	-2.5227*1e-4,	1.0415*1e-4,	-2.1947*1e-5,	1.2819*1e-4,	-8.6324*1e-6, -9.2918*1e-5,	-7.3422*1e-5,	-1.2908*1e-5};	
+	this ->x_prim=(float[12]){-4.2670*1e-6,	-3.6560*1e-5, 9.6572*1e-5,	-3.9196*1e-4,	-2.5227*1e-4,	1.0415*1e-4,	-2.1947*1e-5,	1.2819*1e-4,	-8.6324*1e-6, -9.2918*1e-5,	-7.3422*1e-5,	-1.2908*1e-5};
 	this ->x_vert=(float[12]){-0.0508*1e-3, 0.0089*1e-3, -0.0211*1e-3,    0.1913*1e-3,    0.0071*1e-3,   -0.0163*1e-3,   -0.0022*1e-3,-0.0175*1e-3,  0.0359*1e-3,0.0699*1e-3, 0.0458*1e-3,-0.0329*1e-3};
 
 	this -> x_hor_cpy=0.0;
@@ -423,7 +423,7 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 							-0.0002,  	-0.0010,	-0.0118,  	 0.0035};
 
 
-	
+
 	this->x_hor= new float*[12];
 	for (i = 0; i<12; i++) {
 		this->x_hor[i] = new float[4];
@@ -440,12 +440,12 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 						{0.0001,   	 0.0122, 	-0.0042,  	-0.0026},
 						{0.0003,   	 0.0089, 	-0.0012,   	 0.0104},
 						{-0.0002,  	-0.0010,	-0.0118,  	 0.0035}};
-			     
+
 		this->x_hor_buff= new float*[12];
 		for (i = 0; i<12; i++) {
 		this->x_hor_buff[i] = new float[4];
 		}
-			     
+
 	  float x_hor_buff[12][4]={	{-0.0003,	-0.0013,	-0.0116,	-0.0028},
 								{0.00005, 	 0.0043,	-0.0005,	 0.0028},
 								{-0.0001,	-0.0108,	-0.0015,	 0.0077},
@@ -457,9 +457,9 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 								{0.0001,	 0.0015,     0.0135,    -0.0045},
 								{0.0001, 	 0.0122,	-0.0042,    -0.0026},
 								{0.0003,	 0.0089, 	-0.0012,     0.0104},
-								{-0.0002,	-0.0010,	-0.0118,     0.0035}};		
-			
-		
+								{-0.0002,	-0.0010,	-0.0118,     0.0035}};
+
+
 		this->x_hor_vec=(float[48]){-0.0003,	-0.0013,	-0.0116,	-0.0028,
 									 0.00005,	 0.0043,	-0.0005, 	 0.0028,
 									-0.0001,	-0.0108,	-0.0015,	 0.0077,
@@ -472,8 +472,8 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 									 0.0001,   	 0.0122, 	-0.0042,  	-0.0026,
 									 0.0003,   	 0.0089, 	-0.0012,   	 0.0104,
 									-0.0002,  	-0.0010,	-0.0118,  	 0.0035};
-	
-		
+
+
 		this->x_buff=(float[48]){	-0.0003,	-0.0013,	-0.0116,	-0.0028,
 									 0.00005,	 0.0043,	-0.0005, 	 0.0028,
 									-0.0001,	-0.0108,	-0.0015,	 0.0077,
@@ -486,21 +486,21 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 									 0.0001,   	 0.0122, 	-0.0042,  	-0.0026,
 									 0.0003,   	 0.0089, 	-0.0012,   	 0.0104,
 									-0.0002,  	-0.0010,	-0.0118,  	 0.0035};
-		
-		
-			
+
+
+
 		// Load A matrices
-		
+
 		this ->A_prim=(float[12]){0.9938 , 0.9961, 0.9949,0.9967 , 0.9955,0.9948,0.9963, 0.9969 , 0.9973 ,0.9980 ,0.9965,0.9956};
-		this ->A_vert=(float[12]){0.9965,0.9954 ,0.9948 , 0.9958 , 0.9957, 0.9974 ,0.9979,0.9956,0.9954,0.9956, 0.9970,0.9971};				
-		
+		this ->A_vert=(float[12]){0.9965,0.9954 ,0.9948 , 0.9958 , 0.9957, 0.9974 ,0.9979,0.9956,0.9954,0.9956, 0.9970,0.9971};
+
 		this->A_hor= new float**[12]();
 	for (i = 0; i<12; i++) {
 		this->A_hor[i] = new float*[4]();
 		for (j = 0; j < 4; j++)
 			this->A_hor[i][j]=new float[4]();
 	}
-	
+
 	float A_hor[12][4][4]= {{{0.9721,-0.0326,-0.0061,0.0111}, 	{-0.0652,0.9102,-0.0437,0.0786},	{-0.0021,-0.0113,0.8091,0.5950},	{-0.0251,-0.0883,-0.5616, 0.7994}},
 							{{0.9890,-0.0052, 0.0037, 0.0024},	{-0.0668,0.7655,0.4834,0.0621},		{0.0444,0.1091,0.5870,-1.0826},		{0.0347, 0.2852,-0.3127,-0.2216}},
 							{{0.9911,-0.0040,-0.0030,-0.0025},	{-0.0326,0.8415,-0.4706,-0.0508},	{0.0145,0.4454,0.8093, -0.3695},	{-0.0338,0.1428,0.3406,0.8775}},
@@ -513,7 +513,7 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 							{{0.9921, -0.0019 ,-0.0029 ,0.0014},{ -0.0100,0.8107,-0.5821, -0.0003},	{0.0074,0.5790, 0.8081 ,0.1007},	{0.0428,-0.0296,-0.0934 ,0.9092}	},
 							{{0.9849,-0.0085,-0.0062 , 0.0045},	{-0.0446 , 0.8552 ,-0.4275,0.0607},	{0.0224,0.3938,0.8094, 0.4208},		{0.0317, -0.1666,-0.3879 , 0.8713}	},
 							{{0.9929 ,-0.0441,-0.0068,-0.0120},	{-0.0137,0.8813,-0.0429,-0.0549},	{-0.0061, -0.0155,0.7965,-0.6088},	{0.0166 , 0.0665 ,0.5261 , 0.7680}	} };
-	
+
 	this->A_hor_vec=(float[192]){0.9721,-0.0326,-0.0061,0.0111, 	-0.0652,0.9102,-0.0437,0.0786,		-0.0021,-0.0113,0.8091,0.5950,		-0.0251,-0.0883,-0.5616, 0.7994,
 							0.9890,-0.0052, 0.0037, 0.0024,			-0.0668,0.7655,0.4834,0.0621,		 0.0444,0.1091,0.5870,-1.0826,		 0.0347, 0.2852,-0.3127,-0.2216,
 							0.9911,-0.0040,-0.0030,-0.0025,			-0.0326,0.8415,-0.4706,-0.0508,		 0.0145,0.4454,0.8093, -0.3695,		-0.0338,0.1428,0.3406,0.8775,
@@ -526,14 +526,14 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 							0.9921, -0.0019 ,-0.0029 ,0.0014, 		-0.0100,0.8107,-0.5821, -0.0003,	 0.0074,0.5790, 0.8081 ,0.1007,		 0.0428,-0.0296,-0.0934 ,0.9092,
 							0.9849,-0.0085,-0.0062 , 0.0045,		-0.0446 , 0.8552 ,-0.4275,0.0607,	 0.0224,0.3938,0.8094, 0.4208,		 0.0317, -0.1666,-0.3879 , 0.8713,
 							0.9929 ,-0.0441,-0.0068,-0.0120,		-0.0137,0.8813,-0.0429,-0.0549,		-0.0061, -0.0155,0.7965,-0.6088,	 0.0166 , 0.0665 ,0.5261 , 0.7680};
-	
+
 
 
 	//this->A_hor_vec=(float[16]){0.9721,-0.0326,-0.0061,0.0111, 	-0.0652,0.9102,-0.0437,0.0786,		-0.0021,-0.0113,0.8091,0.5950,		-0.0251,-0.0883,-0.5616, 0.799};
-	
+
 
 //Load B matrices
-	this ->B_prim=(float[12]){-0.3714*1e-5,-0.1609*1e-5,-0.2301*1e-5, 0.1228*1e-5 , 0.2129*1e-5 ,0.2721*1e-5 , 0.1622*1e-5, 0.1193*1e-5 ,0.1134*1e-5,-0.0536*1e-5,-0.1395*1e-5,-0.2660*1e-5};	
+	this ->B_prim=(float[12]){-0.3714*1e-5,-0.1609*1e-5,-0.2301*1e-5, 0.1228*1e-5 , 0.2129*1e-5 ,0.2721*1e-5 , 0.1622*1e-5, 0.1193*1e-5 ,0.1134*1e-5,-0.0536*1e-5,-0.1395*1e-5,-0.2660*1e-5};
 	this ->B_vert=(float[12]){-0.0737*1e-5 ,-0.0934*1e-5 ,-0.1150*1e-5 , 0.0823*1e-5 ,   0.0855*1e-5 ,  0.0411*1e-5 ,0.0313*1e-5 , 0.0893*1e-5 , 0.0978*1e-5 ,-0.0806*1e-5 ,-0.0473*1e-5 ,-0.0486*1e-5};
 
 	this->B_hor= new float*[12];
@@ -552,8 +552,8 @@ this ->slope_avrg= (float[12]) { 0,0,0,0,0,0,0,0,0,0,0,0};
 						{0.0052*1e-3,	-0.2924*1e-3,   -0.1013*1e-3, 	-0.2193*1e-3},
 						{0.0193*1e-3, 	-0.3272*1e-3,   -0.5058*1e-3, 	-0.4650*1e-3},
 						{0.00004, 		-0.000003,	    -0.0024,   		-0.0001}};
-	
-						
+
+
 	this->B_hor_vec=(float[48]) {-0.0001, 		-0.000006,		 0.0019,		-0.0003,
 						-0.000004, 	 0.0002,  		 0.0038,		 0.0040,
 						-0.0082*1e-3,   0.4674*1e-3,    0.4001*1e-3,  	-0.5271*1e-3,
@@ -592,8 +592,8 @@ float C_hor[12][4]={{ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013e-4 },
 					{0.5518*1e-4,  	0.0038*1e-4,  -0.0012*1e-4,  0.0005e-4 },
 					{0.1707*1e-4, 	0.0025*1e-4,   0.0005*1e-4, -0.0006e-4}};
 					*/
-					
-					
+
+
 		float C_hor[12][4]={{ 7.0,  0.0087,   0.0012,  7.0 },
 					{7.0,   0.0001,   0.0001,  7.0 },
 					{7.0,   0.0021,  0.0008, 7.0},
@@ -606,9 +606,9 @@ float C_hor[12][4]={{ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013e-4 },
 					{0.8227,  	0.0002,  0.0008,  7.0},
 					{0.5518,  	0.0038,  0.0012,  7.0 },
 					{0.1707, 	0.0025,   0.0005, 7.0}};
-					
-					
-					
+
+
+
 			this->	C_hor_vec=(float[48]){ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013e-4 ,
 											0.1081*1e-3,   0.0001*1e-3,   0.0001*1e-3,  0.0001e-3 ,
 											0.7142*1e-4,   0.0021*1e-4,  -0.0008*1e-4, -0.0001e-4,
@@ -620,12 +620,12 @@ float C_hor[12][4]={{ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013e-4 },
 											0.2916*1e-4,   0.0016*1e-4,   0.0013*1e-4, -0.0005e-4 ,
 											0.8227*1e-4,  	0.0002*1e-4,  -0.0008*1e-4,  0.0001e-4,
 											0.5518*1e-4,  	0.0038*1e-4,  -0.0012*1e-4,  0.0005e-4,
-											0.1707*1e-4, 	0.0025*1e-4,   0.0005*1e-4, -0.0006e-4};					
-					
-					
+											0.1707*1e-4, 	0.0025*1e-4,   0.0005*1e-4, -0.0006e-4};
+
+
 AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: C_hor[0][0]: %f ", ADC_fact[0]);
 
-				
+
 
 // Initialization of outputs adn other signals
 //	this ->y_prim=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
@@ -634,12 +634,12 @@ AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: C_hor[0][0]: %f ", 
 	this->ADC_ext_flux=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->ADC_final=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 	this->buffer_hor = 0.0;
-	this->y_buff2 = 0.0;
-	
+	this->y_buff2 = 1.0;
+
 		this->y_vert= new float[this->NumberOfProbes];
 		this->y_prim= new float[this->NumberOfProbes];
 		this->y_hor= new float[this->NumberOfProbes];
-		
+
 for (i = 0; i < this->NumberOfProbes; i++) {
 		this->y_vert[i] = 0.0;
 		this->y_hor[i] = 0.0;
@@ -673,11 +673,11 @@ for (i = 0; i < this->NumberOfProbes; i++) {
 	this->lastmirnov = new float[this->NumberOfProbes];
 	for(i=0;i<this->NumberOfProbes;i++){
 		this->lastmirnov[i] = (float) 0;
-	}	
+	}
 	this->mirnovaccumulator = new float[this->NumberOfProbes];
 	for(i=0;i<this->NumberOfProbes;i++){
 		this->mirnovaccumulator[i] = (float) 0;
-	}	
+	}
 	this->accumulatorcounter = 0;
 	this->k = 0;
 	this->m = 0;
@@ -685,7 +685,7 @@ for (i = 0; i < this->NumberOfProbes; i++) {
 	this->o = 0;
 	this->buff = 0.0;
 	int doonce = 1;
-	
+
 	return True;
 }
 //} ******* End of bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData)*************************
@@ -698,9 +698,9 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 	this->SignalsInputInterface->Read();
 	OutputInterfaceStruct *outputstruct = (OutputInterfaceStruct *) this->SignalsOutputInterface->Buffer();
 
-	
-	
-	
+
+
+
 
 	ADC_values[0] = (float)inputstruct[0].ADC_magnetic_chopper_fp_0;
 	ADC_values[1] = (float)inputstruct[0].ADC_magnetic_chopper_fp_1;
@@ -719,14 +719,14 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 	prim_meas= inputstruct[0].PrimaryCurrent;
 	hor_meas=  inputstruct[0].HorizontalCurrent;
 	vert_meas= inputstruct[0].VerticalCurrent;
-	
-	
 
-	//Apply coil polarity factor - OK ---vamos usar depois, pra calcular posicao e corrente 
+
+
+	//Apply coil polarity factor - OK ---vamos usar depois, pra calcular posicao e corrente
 	//for (i = 0; i < this->NumberOfMeasurements; i++) {
 		//ADC_values[i] = ADC_values[i] * magnetic_Polarity_calibration[i];
 	//}
-	
+
 
 
 	//if(functionNumber == GAMOffline){
@@ -750,27 +750,27 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			this->accumulatorcounter++ ;
 			for(i=0;i<this->NumberOfProbes;i++){
 				this->mirnovaccumulator[i] = (mirnovaccumulator[i] * (accumulatorcounter - 1) + ADC_values[i])/accumulatorcounter;
-			}	
-			
+			}
+
 		}
-		
+
 		if (((uint)inputstruct[0].usectime - this->saved_usectime) > 999900 || ((uint)inputstruct[0].usectime - this->saved_usectime) < 0 ) { //compara um segundo
-			
+
 			slope = (this->mirnovaccumulator[0] - this->lastmirnov[0]) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime + 1));
 
 			//AssertErrorCondition(Information,"MagneticsGAM:: GAMOnline: usectime: %i, ADC_magnetic_chopper_fp_0 : %f, slope: %f", (uint)inputstruct[0].usectime, ADC_values[0],slope);
-									
+
 			if (((uint)inputstruct[0].usectime - this->lasttime) > 90000000 && ((uint)inputstruct[0].usectime - this->lasttime) < 120000000) {
 				//AssertErrorCondition(Information, "MagneticsGAM:: GAMOnline: sloping it");
 
 				for (i = 0; i < this->NumberOfMeasurements; i++) {
-					
+
 					//this->slopes[i][k] = ((this->ADC_values[i] - this->lastmirnov[i])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime));
 					this->slopes[i][k] = ((this->mirnovaccumulator[i] - this->lastmirnov[i])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime + 1));
 				}
 				k++;
-				
-				
+
+
 				// WO's average
 
 				for (j = 0; j < this->NumberOfMeasurements; j++) {
@@ -780,11 +780,11 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 					this -> slope_avrg[j] = this->buff / (29) ;
 					this->buff = 0.0;
 				}
-				
-		
+
+
 			}
 			else k=0;
-			
+
 
 			//for (i = 0; i < this->NumberOfMeasurements; i++) {
 			//	this->lastmirnov[i] = this->ADC_values[i];
@@ -792,13 +792,13 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			for (i = 0; i < NumberOfMeasurements; i++) {
 				lastmirnov[i] = mirnovaccumulator[i];
 				mirnovaccumulator[i] = (float) 0;
-			}			
+			}
 			this->accumulatorcounter = 0;
-			
+
 			this->saved_usectime = (uint)inputstruct[0].usectime;
 		}
 
-		
+
 
 		if (inputstruct[0].usectime > 0 && inputstruct[0].usectime < usectime_to_wait_for_starting_operation) {
 
@@ -808,10 +808,10 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			//if(inputstruct[0].usectime==900){
 			//	for(i = 0 ; i < this->NumberOfMeasurements ; i++){
 			//		this->magnetic_Offset_zero[i] = ADC_values[i] + this->magnetic_Offset_slope[i]; // b = y(-100us) - a*(-100us) = y(10) + a*(1)
-			//	}				
-			//}			
-			
-	
+			//	}
+			//}
+
+
 
 			outputstruct[0].MagneticProbesR = 0.;
 			outputstruct[0].MagneticProbesZ = 0.;
@@ -819,7 +819,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].Magnetics_R_corrctd= 0.;
 			outputstruct[0].Magnetics_z_corrctd = 0.;
 			outputstruct[0].Magnetics_Ip_corrctd = 0.;
-			
+
 			i=(int)inputstruct[0].usectime/100;
 			if (i==1||i==2||i==3){
 				outputstruct[0].ADC_magnetic_WO_corrctd_0 =  slope_avrg[0]*1e-10;
@@ -851,8 +851,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].ADC_magnetic_WO_corrctd_10 = slopes[10][i]*1e-10;
 			outputstruct[0].ADC_magnetic_WO_corrctd_11 = slopes[11][i]*1e-10;
 			}
-			
-			
+
+
 		} // ********* End usectime < usectime_to_wait_for_starting_operation *******
 		else {
 
@@ -874,7 +874,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				ADC_WO[i] = ADC_values[i] - this->slope_avrg[i] * ((inputstruct[0].usectime - usectime_to_wait_for_starting_operation)) - this->magnetic_Offset_zero[i];
 			}
-			
+
 			// [LSB x sample] -> [V x s] or [Wb]    e com polaridade corregida
 
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
@@ -895,92 +895,92 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].ADC_magnetic_WO_corrctd_9 = ADC_WO_Wb[9];
 			outputstruct[0].ADC_magnetic_WO_corrctd_10 = ADC_WO_Wb[10];
 			outputstruct[0].ADC_magnetic_WO_corrctd_11 = ADC_WO_Wb[11];
-			
+
 
 
 			//Compute fluxes to be substracted (Discrete State-Space equations)
-			
-				
+
+
 				for (i = 0; i < this->NumberOfMeasurements; i++) {
-					this ->y_prim[i]=this ->C_prim[i]* this ->x_prim[i];					
+					this ->y_prim[i]=this ->C_prim[i]* this ->x_prim[i];
 					this ->x_prim[i]=this ->A_prim[i]* this ->x_prim[i]+ (this ->B_prim[i]*prim_meas);
-					
+
 					this ->y_vert[i]=this ->C_vert[i]*this ->x_vert[i];
-					this ->x_vert[i]=this ->A_vert[i]*this ->x_vert[i]+(this ->B_vert[i]*vert_meas);					
+					this ->x_vert[i]=this ->A_vert[i]*this ->x_vert[i]+(this ->B_vert[i]*vert_meas);
 					this -> y_hor[i]=0.0;
 				}
-				
-				
-				
+
+
+
 				for (i = 0; i < this->NumberOfMeasurements; i++) {
-						for (j=0; j< 4; j++){								
-								this->m= 4*(i)+j;								
-								this -> y_hor[i] += this -> C_hor_vec[m]*this-> x_hor_vec[m];																									
-																				}										
+						for (j=0; j< 4; j++){
+								this->m= 4*(i)+j;
+								this -> y_hor[i] += this -> C_hor_vec[m]*this-> x_hor_vec[m];
 																				}
-						
-											
-			
-					
+																				}
+
+
+
+
 			for (i = 0; i < NumberOfMeasurements; i++) {
-					for (j=0; j< 4; j++){						
-						m= 4*(i)+j;					
-						for (k=0; k< 4; k++){	
+					for (j=0; j< 4; j++){
+						m= 4*(i)+j;
+						for (k=0; k< 4; k++){
 										n= k+(4*j)+(16*i);
-										o=4*i+k;									
-										buffer_hor+=A_hor_vec[n]*x_hor_vec[o];									
+										o=4*i+k;
+										buffer_hor+=A_hor_vec[n]*x_hor_vec[o];
 										}
 					x_buff[m]=buffer_hor;
 					x_buff[m]=x_buff[m]+(B_hor_vec[m]*hor_meas);
 					buffer_hor=0;
 								}
-								}	
-					
-								
-			for (j=0; j< 48; j++){									
+								}
+
+
+			for (j=0; j< 48; j++){
 								x_hor_vec[j]=x_buff[j];
 										}
-																
-					
-					/*	
+
+
+					/*
 						if (doonce!=0) {
 			printf(" C_hor[0][0]: %f, %f", C_hor[0][0],this->ADC_fact[0]);
 			AssertErrorCondition(Information,"MagneticsGAM:: GAMOnline: C_hor: %f ", C_hor[0][0]);
 			doonce = 0;
 		}
-																
+
 				//AssertErrorCondition(Information,"MagneticsGAM:: GAMOnline: C_hor: %f ", this->C_hor[5][2]);
-																				
+
 		//		for (i = 0; i < this->NumberOfMeasurements; i++) {
 			//			for (j=0; j< 4; j++){
 				//			for (k=0; k< 4; k++){
-					//				x_hor[i][j] +=A_hor[i][j][k]*x_hor_buff[i][k];}		
-				//				this -> x_hor_cpy=	this ->x_hor[i][j]+ (this ->B_hor[i][j]*hor_meas);	
-					//			this->x_hor[i][j]=this -> x_hor_cpy;												
+					//				x_hor[i][j] +=A_hor[i][j][k]*x_hor_buff[i][k];}
+				//				this -> x_hor_cpy=	this ->x_hor[i][j]+ (this ->B_hor[i][j]*hor_meas);
+					//			this->x_hor[i][j]=this -> x_hor_cpy;
 	//					x_hor[i][j]=x_hor[i][j]+B_hor[i][j]*hor_meas;
 										//									}}
-															
-				
+
+
 //				for (i = 0; i < this->NumberOfMeasurements; i++) {
 	//				 this -> x_hor_buff[i][0]=  this->x_hor[i][0];
 		//			 this -> x_hor_buff[i][1]=  this->x_hor[i][1];
 			//		 this -> x_hor_buff[i][2]=  this->x_hor[i][2];
 				//	 this -> x_hor_buff[i][3]=  this->x_hor[i][3];
 			//														}
-				
+
 /*			for (i = 0; i < this->NumberOfMeasurements; i++) {
 //				 this ->y_prim[i]= this ->C_prim[i]* this ->x_prim[i];
 //				x_prim[i]=A_prim[i]*x_prim[i]+B_prim[i]*prim_meas;
-				
+
 //				y_vert[i]=C_vert[i]*x_vert[i];
 //				x_vert[i]=A_vert[i]*x_vert[i]+B_vert[i]*vert_meas;
-				
+
 				//this -> y_hor[i]=0.0;
 				//}
 				//for (i = 0; i < this->NumberOfMeasurements; i++) {
 				//* this -> x_hor_cpy[i]= this->x_hor[i][j];
 				//* }
-				
+
 				//for (i = 0; i < this->NumberOfMeasurements; i++) {
 				//for (j=0; j< 4; j++){
 				////	 y_hor[i] += C_hor[i][j]*x_hor[i][j];
@@ -990,7 +990,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			//}
 				////y_buff=0.0;
 				//}
-//				
+//
 /*			for (i = 0; i < this->NumberOfMeasurements; i++) {
 					//for (j=0; j< 4; j++){
 						//for (k=0; k< 4; k++){
@@ -999,7 +999,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 						//x_hor[i][j]=x_hor[i][j]+B[i][j]*hormeas;
 										//}
 															//}
-															
+
 	//		for (i = 0; i < this->NumberOfMeasurements; i++) {
 				//y_hor[i]=C_hor[i][0]*x_hor[i][0]+C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3];
 	//			this-> y_hor[i]=0;
@@ -1007,19 +1007,19 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 	//				this->y_hor[i]=this->C_hor[i][j]*this->x_hor[i][j]+this->y_hor[i];
 	//				x_hor_buff[i][j]=x_hor[i][j];
 	//								}
-	//		x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;				
-	//		x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;				
-	//		x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;				
-	//		x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;				
-	//			}	
-				
-				
-			
+	//		x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;
+	//		x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;
+	//		x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;
+	//		x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;
+	//			}
+
+
+
 			//for (i = 0; i < this->NumberOfMeasurements; i++) {
 				//ADC_ext_flux[i]=y_prim[i]+y_vert[i]+y_hor[i];
 				//ADC_final[i]=ADC_WO_Wb[i]-ADC_ext_flux[i];
 				//}
-			
+
 
 
 
@@ -1030,15 +1030,15 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				//corrected_probes[i] = corrected_probes[i]-allmirnv_vert[i]-allmirnv_hor[i]-allmirnv_prim[i];
 			//}
 			*/
-			
+
 			//Substract calculated external fluxes from the mirnov measurements
-			
+
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				ADC_ext_flux[i]=y_prim[i]+y_vert[i]+y_hor[i];
 				ADC_final[i]=ADC_WO_Wb[i]-ADC_ext_flux[i];
 				}
-			
-			
+
+
 			//Write the value of the 12 mirnov external fluxes reconstructed
 			outputstruct[0].Magnetics_ext_flux_0 = ADC_ext_flux[0];
 			outputstruct[0].Magnetics_ext_flux_1 = ADC_ext_flux[1];
@@ -1052,8 +1052,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].Magnetics_ext_flux_9 = ADC_ext_flux[9];
 			outputstruct[0].Magnetics_ext_flux_10 = ADC_ext_flux[10];
 			outputstruct[0].Magnetics_ext_flux_11 = ADC_ext_flux[11];
-			
-			
+
+
 			//Write the value of the 12 mirnov with flux correction
 			outputstruct[0].Magnetics_flux_corrctd_0 = ADC_final[0];
 			outputstruct[0].Magnetics_flux_corrctd_1 = ADC_final[1];
@@ -1075,11 +1075,11 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				magnetic_field_sum = ADC_WO_Wb[i]+ magnetic_field_sum;
 			}
 
-			outputstruct[0].MagneticProbesPlasmaCurrent = magnetic_field_sum*this->plasma_current_convertion_factor;//corrected_probes[11]; 
+			outputstruct[0].MagneticProbesPlasmaCurrent = magnetic_field_sum*this->plasma_current_convertion_factor;//corrected_probes[11];
 
 
 
-																			
+
 			// Estimate radial_position and vertical_position
 			radial_position = 0.0;
 			vertical_position = 0.0;
@@ -1121,7 +1121,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			radial_position = 0;
 			vertical_position = 0;
 			}
-			
+
 
 
 			// Hard clip position (limits for the output signal)
@@ -1131,7 +1131,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			if(vertical_position < -this->clip_limit) vertical_position = -this->clip_limit;
 			if(vertical_position > this->clip_limit) vertical_position = this->clip_limit;
 
-			
+
 
 			outputstruct[0].MagneticProbesR = radial_position;
 			outputstruct[0].MagneticProbesZ = vertical_position;
@@ -1146,7 +1146,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 		outputstruct[0].MagneticProbesPlasmaCurrent = 0;
 		outputstruct[0].MagneticProbesR = 0;
 		outputstruct[0].MagneticProbesZ = 0;
-		
+
 		outputstruct[0].ADC_magnetic_WO_corrctd_0 = 0.;
 		outputstruct[0].ADC_magnetic_WO_corrctd_1 = 0.;
 		outputstruct[0].ADC_magnetic_WO_corrctd_2 = 0.;
@@ -1159,7 +1159,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 		outputstruct[0].ADC_magnetic_WO_corrctd_9 = 0.;
 		outputstruct[0].ADC_magnetic_WO_corrctd_10 = 0.;
 		outputstruct[0].ADC_magnetic_WO_corrctd_11 = 0.;
-		
+
 		//Write the value of the 12 mirnov external fluxes reconstructed
 			outputstruct[0].Magnetics_ext_flux_0 = 0.;
 			outputstruct[0].Magnetics_ext_flux_1 = 0.;
@@ -1173,7 +1173,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].Magnetics_ext_flux_9 = 0.;
 			outputstruct[0].Magnetics_ext_flux_10 = 0.;
 			outputstruct[0].Magnetics_ext_flux_11 = 0.;
-		
+
 		if (((uint)inputstruct[0].usectime - this->saved_usectime) > 30000000 || ((uint)inputstruct[0].usectime - this->saved_usectime) < 0 ) {
 			AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: usectime: %i ", (uint)inputstruct[0].usectime);
 			slope = ((this->ADC_values[0] - this->lastmirnov[0])) / ((float)((uint)inputstruct[0].usectime - this->saved_usectime + 0.1));
@@ -1183,15 +1183,15 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 		this->lasttime=inputstruct[0].usectime;
 		this->k=0;
 		this->saved_usectime = (uint)inputstruct[0].usectime;
-		
+
 		for (i = 0; i < this->NumberOfMeasurements; i++) {
 				this->lastmirnov[i] = this->ADC_values[i];
 			}
 		this->mirnovaccumulator = (float[12]) {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 		this->accumulatorcounter = 0;
-		
+
 	} //	*******	End If(!GAMOnline) *********
-	
+
 
 	this->SignalsOutputInterface->Write();
 
@@ -1263,8 +1263,8 @@ bool MagneticsGAM::ProcessHttpMessage(HttpStream &hStream) {
 		hmStream.SSPrintf(HtmlTagStreamMode, "table border=\"1\"><tr><td>magnetic_Polarity_calibration</td");
 		for (i = 0; i<NumberOfModules; i++)hmStream.SSPrintf(HtmlTagStreamMode, "td>%.2f</td", magnetic_Polarity_calibration[i]);
 		hmStream.SSPrintf(HtmlTagStreamMode, "/tr></table><br");
-		
-		
+
+
 		for (j = 0; j < this->NumberOfMeasurements; j++) {
 			hmStream.SSPrintf(HtmlTagStreamMode, "table border=\"1\"><tr><td>Calibration mirnov %d </td", j);
 				for (i = 0; i < 29; i++) {
