@@ -97,6 +97,8 @@ private:
 	int i;
 	int j;
 	int m;
+	int n;
+	int o;
 	int doonce;
 	int usectime_to_wait_for_starting_operation;
 	bool magnetic_radial_bool;
@@ -131,7 +133,9 @@ private:
 	float **x_hor_buff;
 	float x_hor_cpy;
 	float *x_hor_vec;
-	float *x_hor_vec_cpy;
+	float *x_buff;
+	float *x_test;
+	
 	
 	
 	float *A_prim;
@@ -153,7 +157,7 @@ private:
 	float *y_prim;
 	float *y_vert;
 	float *y_hor;
-	float y_buff;
+	float buffer_hor;
 	float y_buff2;
 	// Sinal Reconstruido a partir dos fluxos externos
 	float *ADC_ext_flux;
