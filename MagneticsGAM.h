@@ -99,6 +99,7 @@ private:
 	int m;
 	int n;
 	int o;
+	int p;
 	int doonce;
 	int usectime_to_wait_for_starting_operation;
 	bool magnetic_radial_bool;
@@ -133,7 +134,7 @@ private:
 	float **x_hor_buff;
 	float x_hor_cpy;
 	float *x_hor_vec;
-	float *x_buff;
+	float *x_buff_hor;
 	float *x_test;
 	
 	
