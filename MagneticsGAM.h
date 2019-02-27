@@ -126,6 +126,11 @@ private:
 	float *ADC_fact;
 	float *ADC_WO_Wb;
 	
+	// Matrix for miltufilament model
+	
+	float *Mpf_SVD;
+	float *Mfp;
+	
 	
 	//Cenas pra os modelos em espaço de estados
 	float *x_prim;
@@ -202,7 +207,7 @@ private:
 	float radial_position, vertical_position;
 //	float rOffset, zOffset;
 	float magnetic_field_sum;
-
+	float magnetic_field_sum_corr;
 	bool view_input_variables;
 
 public:

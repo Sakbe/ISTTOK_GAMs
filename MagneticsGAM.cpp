@@ -337,6 +337,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 		this->allmirnv_hor[i] = 0.0;
 	}
 	magnetic_field_sum = 0.0;
+	magnetic_field_sum_corr = 0.0;
 
 	//ACHTUNG ACHTUNG!!! 0.1 if 100us and 0.01 if 1000us
 	// Correct Offsets factor - values Bits/ms -> bits/100us
@@ -609,7 +610,14 @@ float C_hor[12][4]={{ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013*1e-4 },
 											0.2916*1e-4,   0.0016*1e-4,   0.0013*1e-4, -0.00046*1e-4 ,
 											0.8227*1e-4,  	0.0002*1e-4,  -0.0008*1e-4,  0.0001e-4,
 											0.5518*1e-4,  	0.0038*1e-4,  -0.0012*1e-4,  0.0005e-4,
-											0.17073*1e-4, 	0.00252*1e-4,   0.0004647*1e-4, -0.0006451*1e-4};					
+											0.17073*1e-4, 	0.00252*1e-4,   0.0004647*1e-4, -0.0006451*1e-4};	
+															
+// Decleration of matrix Mpf for multifilament model
+					
+					
+					
+					
+					
 					
 					
 AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: C_hor[0][0]: %f ", (float)ADC_fact[0]);
@@ -851,6 +859,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				for (i = 0; i < this->NumberOfMeasurements; i++) {
 					this->magnetic_Offset_zero[i] = ADC_values[i];
 					magnetic_field_sum = 0.0;
+					magnetic_field_sum_corr = 0.0;
 				}
 			}
 
@@ -1023,7 +1032,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				ADC_final[i]=ADC_WO_Wb[i]-ADC_ext_flux[i];
 				}
 			
-			
+			ADC_final[9] = ADC_final[9] * 1.2803;//correction mirnov10			
 			//Write the value of the 12 mirnov external fluxes reconstructed
 			outputstruct[0].Magnetics_ext_flux_0 = ADC_ext_flux[0];
 			outputstruct[0].Magnetics_ext_flux_1 = ADC_ext_flux[1];
@@ -1056,12 +1065,14 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			// Calculate Ip
 			magnetic_field_sum = 0.0;  //this->NumberOfMeasurements
+			magnetic_field_sum_corr = 0.0;
 			for (i = 0; i < this->NumberOfMeasurements; i++) {
 				magnetic_field_sum = ADC_WO_Wb[i]+ magnetic_field_sum;
+				magnetic_field_sum_corr = ADC_final[i]+ magnetic_field_sum_corr;
 			}
 
 			outputstruct[0].MagneticProbesPlasmaCurrent = magnetic_field_sum*this->plasma_current_convertion_factor;//corrected_probes[11]; 
-
+			outputstruct[0].Magnetics_Ip_corrctd = magnetic_field_sum_corr*this->plasma_current_convertion_factor;
 
 
 																			
@@ -1094,8 +1105,10 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			for(i = 0 ; i < this->NumberOfMeasurements ; i++){
 
-			radial_position += corrected_probes[i] * this->radial_coeficients[this->ProbeNumbers[i]];
-			vertical_position += corrected_probes[i] * this->vertical_coeficients[this->ProbeNumbers[i]];
+		//	radial_position += ADC_WO_Wb[i] * this->radial_coeficients[this->ProbeNumbers[i]];
+		//	vertical_position += ADC_WO_Wb[i] * this->vertical_coeficients[this->ProbeNumbers[i]];
+			radial_position += ADC_final[i] * this->radial_coeficients[this->ProbeNumbers[i]];
+			vertical_position += ADC_final[i] * this->vertical_coeficients[this->ProbeNumbers[i]];
 			}
 
 			if (magnetic_field_sum !=0) {
@@ -1158,6 +1171,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			outputstruct[0].Magnetics_ext_flux_9 = 0.;
 			outputstruct[0].Magnetics_ext_flux_10 = 0.;
 			outputstruct[0].Magnetics_ext_flux_11 = 0.;
+	
+		outputstruct[0].Magnetics_Ip_corrctd = 0;
 		
 		if (((uint)inputstruct[0].usectime - this->saved_usectime) > 30000000 || ((uint)inputstruct[0].usectime - this->saved_usectime) < 0 ) {
 			AssertErrorCondition(Information,"MagneticsGAM:: GAMOffline: usectime: %i ", (uint)inputstruct[0].usectime);
