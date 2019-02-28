@@ -238,7 +238,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 		return False;
 	}
 
-	number_of_signals_to_read = 42;
+	number_of_signals_to_read = 42; //56
 	CDB_move_to = new FString[number_of_signals_to_read];
 	SignalType = new FString[number_of_signals_to_read];
 	CDB_move_to[0].Printf("magnetic_probes_r");
@@ -283,6 +283,20 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	CDB_move_to[39].Printf("Magnetics_R_corrctd");
 	CDB_move_to[40].Printf("Magnetics_z_corrctd");
 	CDB_move_to[41].Printf("Magnetics_Ip_corrctd");
+	//CDB_move_to[42].Printf("RMSE_mirnv");
+	/*CDB_move_to[43].Printf("RMSE_Ifil");
+	CDB_move_to[44].Printf("Magnetics_SVD_recons_0");
+	CDB_move_to[45].Printf("Magnetics_SVD_recons_1");
+	CDB_move_to[46].Printf("Magnetics_SVD_recons_2");
+	CDB_move_to[47].Printf("Magnetics_SVD_recons_3");
+	CDB_move_to[48].Printf("Magnetics_SVD_recons_4");
+	CDB_move_to[49].Printf("Magnetics_SVD_recons_5");
+	CDB_move_to[50].Printf("Magnetics_SVD_recons_6");
+	CDB_move_to[51].Printf("Magnetics_SVD_recons_7");
+	CDB_move_to[52].Printf("Magnetics_SVD_recons_8");
+	CDB_move_to[53].Printf("Magnetics_SVD_recons_9");
+	CDB_move_to[54].Printf("Magnetics_SVD_recons_10");
+	CDB_move_to[55].Printf(	"Magnetics_SVD_recons_11");*/
 
 	for (i = 0; i<number_of_signals_to_read; i++) {
 
@@ -612,9 +626,41 @@ float C_hor[12][4]={{ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013*1e-4 },
 											0.5518*1e-4,  	0.0038*1e-4,  -0.0012*1e-4,  0.0005e-4,
 											0.17073*1e-4, 	0.00252*1e-4,   0.0004647*1e-4, -0.0006451*1e-4};	
 															
-// Decleration of matrix Mpf for multifilament model
+// Initialization of the variables for calculating the centroid position for multifilament model
+// 7 filaments * 12 coils
+	// radius 5 [cm] from central filament to radial filaments
+	
+this-> Mpf_SVD_corr=(float[84]){ 472086.187804917,	-4052047.62807573,	32703579.1848192,	-69579011.4842266,	53936244.5981449,	-14625341.5996303,	-14625341.5996320,	53936244.5981467,	-69579011.4842287,	32703579.1848217,	-4052047.62807835, 	472086.187807036,
+				-316709.787104180,	519760.850846756,	-3873209.37066971,	8605169.84682676,	-6698686.11099274,	1821327.17941657,	1821327.17941678,	-6698686.11099296,	8605169.84682702,	-3873209.37067001,	519760.850847079, 	-316709.787104442,
+				 87572.5960975867,	594952.653746323,	-4666762.49801214,	9841834.01697765,	-7593437.88764413,	2023655.61913615,	2070594.23630447,	-7476191.61519410,	9823449.28637081,	-4900604.26840064,	390889.046074736,	28882.1479281171,
+				-116870.066911669,	702403.027615122,	-5532800.73445480,	11800871.0803144,	-9190923.13011351,	2613106.92855291,	2527393.43079230,	-9418773.85954442,	11684658.8220455,	-5434320.77170507,	815172.401765702,	-83997.6701786653,
+				-64386.4596194328,	716978.164436526,	-6038724.51758130,	12916600.7926723,	-9823791.54520333,	2502031.14386129,	2502031.14386160,	-9823791.54520366,	12916600.7926727,	-6038724.51758175,	716978.164437008,	-64386.4596198232,
+				-83997.6701783051,	815172.401765258,	-5434320.77170466,	11684658.8220452,	-9418773.85954412,	2527393.43079201,	2613106.92855320,	-9190923.13011381,	11800871.0803148,	-5532800.73445522,	702403.027615567,	-116870.066912029,
+				 28882.1479284166,	390889.046074366,	-4900604.26840029,	9823449.28637052,	-7476191.61519385,	2070594.23630423,	2023655.61913639,	-7593437.88764438,	9841834.01697794,	-4666762.49801249,	594952.653746693,	87572.5960972870};
+	
 					
-					
+this-> Mfp=(float[84]){ -1.43676746989355*1e-06,	-3.50297447689559*1e-06,	-1.59432882220592*1e-06,	-9.07753536601227*1e-07,	-7.63816088771978*1e-07,	-1.03564689815154*1e-06,	-2.18441630395307*1e-06,
+			-1.57621934794434*1e-06,	-2.69259341848311*1e-06,	-1.39114476121602*1e-06,	-9.23068023384328*1e-07,	-8.84005456272177*1e-07,	-1.40111127004305*1e-06,	-3.46486130426331*1e-06,
+			-1.85652982126111*1e-06,	-2.26120807255429*1e-06,	-1.39382382931709*1e-06,	-1.06609554873689*1e-06,	-1.18036237305197*1e-06,	-2.28602171554116*1e-06,	-4.21360234587828*1e-06,
+			-2.25902290915744*1e-06,	-2.12824503200163*1e-06,	-1.54098776944301*1e-06,	-1.36572542664713*1e-06,	-1.80299627067539*1e-06,	-4.17140909972325*1e-06,	-3.55052980292162*1e-06,
+			-2.70099739689445*1e-06,	-2.13559041180063*1e-06,	-1.80601766808069*1e-06,	-1.88311126723106*1e-06,	-3.07819477112698*1e-06,	-5.17306011268180*1e-06,	-2.96640311185809*1e-06,
+			-3.00899690066845*1e-06,	-2.17412546701932*1e-06,	-2.15382034382745*1e-06,	-2.69866949058970*1e-06,	-5.19346481602435*1e-06,	-3.89543552329908*1e-06,	-2.53897441040656*1e-06,
+			-3.00899690066845*1e-06,	-2.17412546701932*1e-06,	-2.53897441040656*1e-06,	-3.89543552329908*1e-06,	-5.19346481602435*1e-06,	-2.69866949058970*1e-06,	-2.15382034382745*1e-06,
+			-2.70099739689445*1e-06,	-2.13559041180063*1e-06,	-2.96640311185809*1e-06,	-5.17306011268180*1e-06,	-3.07819477112698*1e-06,	-1.88311126723106*1e-06,	-1.80601766808069*1e-06,
+			-2.25902290915744*1e-06,	-2.12824503200163*1e-06,	-3.55052980292162*1e-06,	-4.17140909972325*1e-06,	-1.80299627067539*1e-06,	-1.36572542664713*1e-06,	-1.54098776944301*1e-06,
+			-1.85652982126111*1e-06,	-2.26120807255429*1e-06,	-4.21360234587828*1e-06,	-2.28602171554116*1e-06,	-1.18036237305197*1e-06,	-1.06609554873689*1e-06,	-1.39382382931709*1e-06,
+			-1.57621934794434*1e-06,	-2.69259341848311*1e-06,	-3.46486130426331*1e-06,	-1.40111127004305*1e-06,	-8.84005456272177*1e-07,	-9.23068023384328*1e-07,	-1.39114476121602*1e-06,
+			-1.43676746989355*1e-06,	-3.50297447689559*1e-06,	-2.18441630395307*1e-06,	-1.03564689815154*1e-06,	-7.63816088771978*1e-07,	-9.07753536601227*1e-07,	-1.59432882220592*1e-06};
+	
+	
+this-> Ipf_corr=(float[7]){0,0,0,0,0,0,0};
+this-> Ipf_=(float[7]){0,0,0,0,0,0,0};
+this-> Bmag_rec=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+this-> Bmag_rec_corr=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
+this->IfilR=(float[7]){46, 51, 48.5, 43.5, 41, 43.5, 48.5};//is in [cm]
+this->IfilZ=(float[7]){0, 0, 4.3301, 0, -4.3301, -4.3301};//is in [cm]
+	
+	
 					
 					
 					
@@ -1077,6 +1123,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 																			
 			// Estimate radial_position and vertical_position
+			radial_position_corr = 0.0;
+			vertical_position_corr = 0.0;
 			radial_position = 0.0;
 			vertical_position = 0.0;
 			/* This was done when the integrators were analogic
@@ -1103,23 +1151,64 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			else {}*/
 
 
-			for(i = 0 ; i < this->NumberOfMeasurements ; i++){
+ /*		OLD CENTROID CALCULATION
+ 		for(i = 0 ; i < this->NumberOfMeasurements ; i++){
 
 		//	radial_position += ADC_WO_Wb[i] * this->radial_coeficients[this->ProbeNumbers[i]];
 		//	vertical_position += ADC_WO_Wb[i] * this->vertical_coeficients[this->ProbeNumbers[i]];
 			radial_position += ADC_final[i] * this->radial_coeficients[this->ProbeNumbers[i]];
 			vertical_position += ADC_final[i] * this->vertical_coeficients[this->ProbeNumbers[i]];
 			}
-
-			if (magnetic_field_sum !=0) {
+                      if (magnetic_field_sum !=0) {
 			radial_position = radial_position / magnetic_field_sum;
 			vertical_position = vertical_position / magnetic_field_sum;
 			}
+						
 			else {
 			radial_position = 0;
 			vertical_position = 0;
+			radial_position_corr = 0.0;
+			vertical_position_corr = 0.0;
 			}
 			
+			
+			*/
+			
+			
+			//start with multifilament
+			sum_Ifil = 0.0;
+			sum_Ifil_corr = 0.0;
+			
+			for(i=0; i<7; i++){
+				for(j=0; j<12; j++){
+					this->m= 12*(i)+j;
+					this->Ipf_corr[i] += this->Mpf_SVD[m] * this->ADC_final[j];
+					this->Ipf[i] += this->Mpf_SVD[m] * this->ADC_WO_Wb[j];
+					
+				}
+			}
+			for(i=0; i<7; i++){
+				this->sum_Ifil += this->Ipf[i];
+				this->sum_Ifil_corr += this->Ipf_corr[i];
+				
+				this->radial_position_corr += this->Ipf_corr[i] * (this->IfilR[i]^2);
+				this->radial_position += this->Ipf[i] * (this->IfilR[i]^2);
+				
+				this->vertical_position_corr += this->Ipf_corr[i] * (this->IfilZ[i]);
+				this->vertical_position += this->Ipf[i] * (this->IfilZ[i]);
+			}
+			
+			this->radial_position_corr = sqrt(this->radial_position_corr / sum_Ifil_corr);
+			this->radial_position = sqrt(this->radial_position / sum_Ifil);
+
+			this->vertical_position_corr = (this->vertical_position_corr / sum_Ifil_corr);
+			this->vertical_position = (this->vertical_position / sum_Ifil);
+			
+			
+			
+			
+			
+
 
 
 			// Hard clip position (limits for the output signal)
@@ -1128,11 +1217,19 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			if(vertical_position < -this->clip_limit) vertical_position = -this->clip_limit;
 			if(vertical_position > this->clip_limit) vertical_position = this->clip_limit;
+			//multifilament
+			if(radial_position_corr < -this->clip_limit) radial_position_corr = -this->clip_limit;
+			if(radial_position_corr > this->clip_limit) radial_position_corr = this->clip_limit;
+
+			if(vertical_position_corr < -this->clip_limit) vertical_position_corr = -this->clip_limit;
+			if(vertical_position_corr > this->clip_limit) vertical_position_corr = this->clip_limit;
 
 			
 
 			outputstruct[0].MagneticProbesR = radial_position;
 			outputstruct[0].MagneticProbesZ = vertical_position;
+			outputstruct[0].MagneticProbesR_corrctd = radial_position_corr;
+			outputstruct[0].MagneticProbesZ_corrctd = vertical_position_corr;
 
 		} // ******** End usectime > usectime_to_wait_for_starting_operation **************
 	} // ************* End If(GAMOnline) *******************************************
@@ -1144,6 +1241,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 		outputstruct[0].MagneticProbesPlasmaCurrent = 0;
 		outputstruct[0].MagneticProbesR = 0;
 		outputstruct[0].MagneticProbesZ = 0;
+		outputstruct[0].MagneticProbesR_corrctd = 0;
+		outputstruct[0].MagneticProbesZ_corrctd = 0;
 		
 		outputstruct[0].ADC_magnetic_WO_corrctd_0 = 0.;
 		outputstruct[0].ADC_magnetic_WO_corrctd_1 = 0.;
