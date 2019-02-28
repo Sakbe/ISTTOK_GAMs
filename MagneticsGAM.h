@@ -83,6 +83,21 @@ private:
 		float Magnetics_R_corrctd;
 		float Magnetics_z_corrctd;
 		float Magnetics_Ip_corrctd;
+		// Variables from the position reconstruction
+		/*float RMSE_mirnv;
+		float RMSE_Ifil;
+		float Magnetics_SVD_recons_0;
+		float Magnetics_SVD_recons_1;
+		float Magnetics_SVD_recons_2;
+		float Magnetics_SVD_recons_3;
+		float Magnetics_SVD_recons_4;
+		float Magnetics_SVD_recons_5;
+		float Magnetics_SVD_recons_6;
+		float Magnetics_SVD_recons_7;
+		float Magnetics_SVD_recons_8;
+		float Magnetics_SVD_recons_9;
+		float Magnetics_SVD_recons_10;
+		float Magnetics_SVD_recons_11; */
 
 	};
 
@@ -127,9 +142,16 @@ private:
 	float *ADC_WO_Wb;
 	
 	// Matrix for miltufilament model
-	
 	float *Mpf_SVD;
 	float *Mfp;
+	float *Ipf_corr;
+	float *Ipf;
+	float *Bmag_rec;
+	float *Bmag_rec_corr;
+	float *IfilR;
+	float *IfilZ;
+	float sum_Ifil;
+	float sum_Ifil_corr;
 	
 	
 	//Cenas pra os modelos em espaço de estados
@@ -205,6 +227,7 @@ private:
 	float probe_radius, major_radius, clip_limit;
 	float Area, Nvoltas, MAgPerm, ADCconst, Ncoils;
 	float radial_position, vertical_position;
+	float radial_position_corr, vertical_position_corr;
 //	float rOffset, zOffset;
 	float magnetic_field_sum;
 	float magnetic_field_sum_corr;
