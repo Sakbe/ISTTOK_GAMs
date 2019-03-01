@@ -84,7 +84,7 @@ private:
 		float Magnetics_z_corrctd;
 		float Magnetics_Ip_corrctd;
 		// Variables from the position reconstruction
-		/*float RMSE_mirnv;
+		float RMSE_mirnv;
 		float RMSE_Ifil;
 		float Magnetics_SVD_recons_0;
 		float Magnetics_SVD_recons_1;
@@ -97,7 +97,7 @@ private:
 		float Magnetics_SVD_recons_8;
 		float Magnetics_SVD_recons_9;
 		float Magnetics_SVD_recons_10;
-		float Magnetics_SVD_recons_11; */
+		float Magnetics_SVD_recons_11;
 
 	};
 
@@ -152,6 +152,8 @@ private:
 	float *IfilZ;
 	float sum_Ifil;
 	float sum_Ifil_corr;
+	float Ipf_buff;
+	float Ipf_corr_buff;
 	
 	
 	//Cenas pra os modelos em espaço de estados

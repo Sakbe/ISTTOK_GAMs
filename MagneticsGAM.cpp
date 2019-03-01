@@ -238,7 +238,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 		return False;
 	}
 
-	number_of_signals_to_read = 42; //56
+	number_of_signals_to_read = 56; //56
 	CDB_move_to = new FString[number_of_signals_to_read];
 	SignalType = new FString[number_of_signals_to_read];
 	CDB_move_to[0].Printf("magnetic_probes_r");
@@ -283,8 +283,8 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	CDB_move_to[39].Printf("Magnetics_R_corrctd");
 	CDB_move_to[40].Printf("Magnetics_z_corrctd");
 	CDB_move_to[41].Printf("Magnetics_Ip_corrctd");
-	//CDB_move_to[42].Printf("RMSE_mirnv");
-	/*CDB_move_to[43].Printf("RMSE_Ifil");
+	CDB_move_to[42].Printf("RMSE_mirnv");
+	CDB_move_to[43].Printf("RMSE_Ifil");
 	CDB_move_to[44].Printf("Magnetics_SVD_recons_0");
 	CDB_move_to[45].Printf("Magnetics_SVD_recons_1");
 	CDB_move_to[46].Printf("Magnetics_SVD_recons_2");
@@ -296,7 +296,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	CDB_move_to[52].Printf("Magnetics_SVD_recons_8");
 	CDB_move_to[53].Printf("Magnetics_SVD_recons_9");
 	CDB_move_to[54].Printf("Magnetics_SVD_recons_10");
-	CDB_move_to[55].Printf(	"Magnetics_SVD_recons_11");*/
+	CDB_move_to[55].Printf(	"Magnetics_SVD_recons_11");
 
 	for (i = 0; i<number_of_signals_to_read; i++) {
 
@@ -630,7 +630,7 @@ float C_hor[12][4]={{ 0.2379*1e-4,  0.0087*1e-4,   0.0012*1e-4,  0.0013*1e-4 },
 // 7 filaments * 12 coils
 	// radius 5 [cm] from central filament to radial filaments
 	
-this-> Mpf_SVD_corr=(float[84]){ 472086.187804917,	-4052047.62807573,	32703579.1848192,	-69579011.4842266,	53936244.5981449,	-14625341.5996303,	-14625341.5996320,	53936244.5981467,	-69579011.4842287,	32703579.1848217,	-4052047.62807835, 	472086.187807036,
+this-> Mpf_SVD=(float[84]){ 472086.187804917,	-4052047.62807573,	32703579.1848192,	-69579011.4842266,	53936244.5981449,	-14625341.5996303,	-14625341.5996320,	53936244.5981467,	-69579011.4842287,	32703579.1848217,	-4052047.62807835, 	472086.187807036,
 				-316709.787104180,	519760.850846756,	-3873209.37066971,	8605169.84682676,	-6698686.11099274,	1821327.17941657,	1821327.17941678,	-6698686.11099296,	8605169.84682702,	-3873209.37067001,	519760.850847079, 	-316709.787104442,
 				 87572.5960975867,	594952.653746323,	-4666762.49801214,	9841834.01697765,	-7593437.88764413,	2023655.61913615,	2070594.23630447,	-7476191.61519410,	9823449.28637081,	-4900604.26840064,	390889.046074736,	28882.1479281171,
 				-116870.066911669,	702403.027615122,	-5532800.73445480,	11800871.0803144,	-9190923.13011351,	2613106.92855291,	2527393.43079230,	-9418773.85954442,	11684658.8220455,	-5434320.77170507,	815172.401765702,	-83997.6701786653,
@@ -654,7 +654,7 @@ this-> Mfp=(float[84]){ -1.43676746989355*1e-06,	-3.50297447689559*1e-06,	-1.594
 	
 	
 this-> Ipf_corr=(float[7]){0,0,0,0,0,0,0};
-this-> Ipf_=(float[7]){0,0,0,0,0,0,0};
+this-> Ipf=(float[7]){0,0,0,0,0,0,0};
 this-> Bmag_rec=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 this-> Bmag_rec_corr=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 this->IfilR=(float[7]){46, 51, 48.5, 43.5, 41, 43.5, 48.5};//is in [cm]
@@ -1178,38 +1178,51 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			//start with multifilament
 			sum_Ifil = 0.0;
 			sum_Ifil_corr = 0.0;
+			Ipf_buff=0.0;
+			Ipf_corr_buff=0.0;
+			this->m = 0;
 			
 			for(i=0; i<7; i++){
 				for(j=0; j<12; j++){
 					this->m= 12*(i)+j;
-					this->Ipf_corr[i] += this->Mpf_SVD[m] * this->ADC_final[j];
-					this->Ipf[i] += this->Mpf_SVD[m] * this->ADC_WO_Wb[j];
+					this->Ipf_buff +=  this->Mpf_SVD[m] * (this->ADC_WO_Wb[j]/(50*49*1e-6));
+					this->Ipf_corr_buff += this->Mpf_SVD[m] * (this->ADC_final[j]/(50*49*1e-6));
 					
 				}
+				this->Ipf[i] =this->Ipf_buff;
+				this->Ipf_corr[i] =this->Ipf_corr_buff;
+				this->Ipf_buff=0.0;
+				this->Ipf_corr_buff=0.0;
+				
 			}
+			
+			//this->Ipf[0] =this->Mpf_SVD[0] * (this->ADC_WO_Wb[0]/(50*49*1e-6))+ this->Mpf_SVD[1] * (this->ADC_WO_Wb[1]/(50*49*1e-6));
+			
 			for(i=0; i<7; i++){
 				this->sum_Ifil += this->Ipf[i];
 				this->sum_Ifil_corr += this->Ipf_corr[i];
 				
-				this->radial_position_corr += this->Ipf_corr[i] * (this->IfilR[i]^2);
-				this->radial_position += this->Ipf[i] * (this->IfilR[i]^2);
+				this->radial_position_corr += this->Ipf_corr[i] * (this->IfilR[i]*this->IfilR[i]);
+				this->radial_position += this->Ipf[i] * (this->IfilR[i]*this->IfilR[i]);
 				
 				this->vertical_position_corr += this->Ipf_corr[i] * (this->IfilZ[i]);
 				this->vertical_position += this->Ipf[i] * (this->IfilZ[i]);
 			}
 			
-			this->radial_position_corr = sqrt(this->radial_position_corr / sum_Ifil_corr);
-			this->radial_position = sqrt(this->radial_position / sum_Ifil);
+			// Let's put the measurements in [m] and put the origin of the centroid in the center of the chamber
+			this->radial_position_corr = (0.01*sqrt(this->radial_position_corr / this->sum_Ifil_corr)) -0.46;
+			this->radial_position = (0.01*sqrt(this->radial_position / this->sum_Ifil))-0.46;
 
-			this->vertical_position_corr = (this->vertical_position_corr / sum_Ifil_corr);
-			this->vertical_position = (this->vertical_position / sum_Ifil);
+		
+			this->vertical_position = 0.01*(this->vertical_position / this->sum_Ifil);
+			this->vertical_position_corr = 0.01*(this->vertical_position_corr / this->sum_Ifil_corr);
 			
 			
-			
-			
+		
 			
 
-
+			
+			
 
 			// Hard clip position (limits for the output signal)
 			if(radial_position < -this->clip_limit) radial_position = -this->clip_limit;
@@ -1228,8 +1241,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			outputstruct[0].MagneticProbesR = radial_position;
 			outputstruct[0].MagneticProbesZ = vertical_position;
-			outputstruct[0].MagneticProbesR_corrctd = radial_position_corr;
-			outputstruct[0].MagneticProbesZ_corrctd = vertical_position_corr;
+			outputstruct[0].Magnetics_R_corrctd = radial_position_corr;
+			outputstruct[0].Magnetics_z_corrctd = vertical_position_corr;
 
 		} // ******** End usectime > usectime_to_wait_for_starting_operation **************
 	} // ************* End If(GAMOnline) *******************************************
@@ -1241,8 +1254,8 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 		outputstruct[0].MagneticProbesPlasmaCurrent = 0;
 		outputstruct[0].MagneticProbesR = 0;
 		outputstruct[0].MagneticProbesZ = 0;
-		outputstruct[0].MagneticProbesR_corrctd = 0;
-		outputstruct[0].MagneticProbesZ_corrctd = 0;
+		outputstruct[0].Magnetics_R_corrctd = 0;
+		outputstruct[0].Magnetics_z_corrctd = 0;
 		
 		outputstruct[0].ADC_magnetic_WO_corrctd_0 = 0.;
 		outputstruct[0].ADC_magnetic_WO_corrctd_1 = 0.;
