@@ -154,7 +154,8 @@ private:
 	float sum_Ifil_corr;
 	float Ipf_buff;
 	float Ipf_corr_buff;
-	
+	float division;
+	float division_corr;
 	
 	//Cenas pra os modelos em espaço de estados
 	float *x_prim;

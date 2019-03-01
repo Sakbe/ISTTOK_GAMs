@@ -658,7 +658,7 @@ this-> Ipf=(float[7]){0,0,0,0,0,0,0};
 this-> Bmag_rec=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 this-> Bmag_rec_corr=(float[12]){0,0,0,0,0,0,0,0,0,0,0,0};
 this->IfilR=(float[7]){46, 51, 48.5, 43.5, 41, 43.5, 48.5};//is in [cm]
-this->IfilZ=(float[7]){0, 0, 4.3301, 0, -4.3301, -4.3301};//is in [cm]
+this->IfilZ=(float[7]){0.0, 0.0, 4.3301, 4.3301, 0.0, -4.3301, -4.3301};//is in [cm]
 	
 	
 					
@@ -1181,6 +1181,9 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			Ipf_buff=0.0;
 			Ipf_corr_buff=0.0;
 			this->m = 0;
+			this->division = 0;
+			this->division_corr = 0;
+
 			
 			for(i=0; i<7; i++){
 				for(j=0; j<12; j++){
@@ -1208,20 +1211,46 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				this->vertical_position_corr += this->Ipf_corr[i] * (this->IfilZ[i]);
 				this->vertical_position += this->Ipf[i] * (this->IfilZ[i]);
 			}
-			
 			// Let's put the measurements in [m] and put the origin of the centroid in the center of the chamber
-			this->radial_position_corr = (0.01*sqrt(this->radial_position_corr / this->sum_Ifil_corr)) -0.46;
-			this->radial_position = (0.01*sqrt(this->radial_position / this->sum_Ifil))-0.46;
-
+			this->division_corr = this->radial_position_corr / this->sum_Ifil_corr; 
+			this->division = this->radial_position / this->sum_Ifil;
+			
+			
+			
+			
+			if(sum_Ifil!=0){
+				
+				this->vertical_position = 0.01*(this->vertical_position / this->sum_Ifil);
+				
+				if(this->division<0){
+					this->radial_position = this->clip_limit;
+				}
+				else{
+				//this->radial_position = (0.01*sqrt(this->division_corr))-0.46;
+					this->radial_position = (0.01*sqrt(this->division))-0.46;
+				}
+			}
+			
+			else{
+				this->radial_position = this->clip_limit;
+				this->vertical_position =this->clip_limit;
+				}
 		
-			this->vertical_position = 0.01*(this->vertical_position / this->sum_Ifil);
-			this->vertical_position_corr = 0.01*(this->vertical_position_corr / this->sum_Ifil_corr);
+		
+		
+		
+			//this->vertical_position = 0.01*(this->vertical_position / this->sum_Ifil);			
+			this->vertical_position_corr =  0.01*(this->vertical_position_corr / this->sum_Ifil_corr);
 			
+			if(this->division_corr<0){
+				this->radial_position_corr = this->clip_limit;
+			}
+			else{
+				this->radial_position_corr = (0.01*sqrt(this->division_corr))-0.46;
+			}
 			
 		
-			
-
-			
+				
 			
 
 			// Hard clip position (limits for the output signal)
@@ -1239,10 +1268,10 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 
 			
 
-			outputstruct[0].MagneticProbesR = radial_position;
-			outputstruct[0].MagneticProbesZ = vertical_position;
-			outputstruct[0].Magnetics_R_corrctd = radial_position_corr;
-			outputstruct[0].Magnetics_z_corrctd = vertical_position_corr;
+			outputstruct[0].MagneticProbesR = radial_position_corr;
+			outputstruct[0].MagneticProbesZ = vertical_position_corr;
+			outputstruct[0].Magnetics_R_corrctd = radial_position;
+			outputstruct[0].Magnetics_z_corrctd = vertical_position;
 
 		} // ******** End usectime > usectime_to_wait_for_starting_operation **************
 	} // ************* End If(GAMOnline) *******************************************
