@@ -80,9 +80,28 @@ private:
 		float Magnetics_ext_flux_10;
 		float Magnetics_ext_flux_11;
 		// Radial and vertical position and plasma current with flux corrections
-		float Magnetics_R_corrctd;
-		float Magnetics_z_corrctd;
+		float Magnetics_R_uncorrctd;
+		float Magnetics_z_uncorrctd;
 		float Magnetics_Ip_corrctd;
+		// Variables from the position reconstruction
+		float RMSE_mirnv;
+		//new
+		float SumIfil;
+		//end
+		//float RMSE_Ifil;
+		float Magnetics_SVD_recons_0;
+		float Magnetics_SVD_recons_1;
+		float Magnetics_SVD_recons_2;
+		float Magnetics_SVD_recons_3;
+		float Magnetics_SVD_recons_4;
+		float Magnetics_SVD_recons_5;
+		float Magnetics_SVD_recons_6;
+		float Magnetics_SVD_recons_7;
+		float Magnetics_SVD_recons_8;
+		float Magnetics_SVD_recons_9;
+		float Magnetics_SVD_recons_10;
+		float Magnetics_SVD_recons_11;
+
 
 	};
 
@@ -99,6 +118,7 @@ private:
 	int m;
 	int n;
 	int o;
+	int p;
 	int doonce;
 	int usectime_to_wait_for_starting_operation;
 	bool magnetic_radial_bool;
@@ -125,6 +145,28 @@ private:
 	float *ADC_fact;
 	float *ADC_WO_Wb;
 	
+	// Matrix for miltufilament model
+	float *Mpf_SVD;
+	float *Mfp;
+	float *Ipf_corr;
+	float *Ipf;
+	float *Bmag_rec;
+	float *Bmag_rec_corr;
+	float *IfilR;
+	float *IfilZ;
+	float sum_Ifil;
+	float sum_Ifil_corr;
+	float Ipf_buff;
+	float Ipf_corr_buff;
+	float division;
+	float division_corr;
+	//add from UNINA
+	float numFilament;//number of filament
+	float Bmag_rec_buff;
+	float Bmag_rec_corr_buff;
+	float Rmse_buff;
+	float PlasmaCurrent;
+	//end
 	
 	//Cenas pra os modelos em espaço de estados
 	float *x_prim;
@@ -133,7 +175,7 @@ private:
 	float **x_hor_buff;
 	float x_hor_cpy;
 	float *x_hor_vec;
-	float *x_buff;
+	float *x_buff_hor;
 	float *x_test;
 	
 	
@@ -199,9 +241,10 @@ private:
 	float probe_radius, major_radius, clip_limit;
 	float Area, Nvoltas, MAgPerm, ADCconst, Ncoils;
 	float radial_position, vertical_position;
+	float radial_position_corr, vertical_position_corr;
 //	float rOffset, zOffset;
 	float magnetic_field_sum;
-
+	float magnetic_field_sum_corr;
 	bool view_input_variables;
 
 public:
