@@ -165,6 +165,7 @@ private:
 	float Bmag_rec_buff;
 	float Bmag_rec_corr_buff;
 	float Rmse_buff;
+	float RMSE_mirnv;
 	float PlasmaCurrent;
 	//end
 	

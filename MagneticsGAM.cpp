@@ -282,7 +282,7 @@ bool MagneticsGAM::Initialise(ConfigurationDataBase& cdbData) {
 	CDB_move_to[38].Printf("Magnetics_ext_flux_11");
 	CDB_move_to[39].Printf("Magnetics_R_uncorrctd");
 	CDB_move_to[40].Printf("Magnetics_z_uncorrctd");
-	CDB_move_to[41].Printf("Magnetics_Ip_uncorrctd");
+	CDB_move_to[41].Printf("Magnetics_Ip_corrctd");
 	CDB_move_to[42].Printf("RMSE_mirnv");
 	//CDB_move_to[43].Printf("RMSE_Ifil");
 	CDB_move_to[43].Printf("SumIfil");
@@ -1030,88 +1030,7 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 										}
 																
 					
-					/*	
-						if (doonce!=0) {
-			printf(" C_hor[0][0]: %f, %f", C_hor[0][0],this->ADC_fact[0]);
-			AssertErrorCondition(Information,"MagneticsGAM:: GAMOnline: C_hor: %f ", C_hor[0][0]);
-			doonce = 0;
-		}
-																
-				//AssertErrorCondition(Information,"MagneticsGAM:: GAMOnline: C_hor: %f ", this->C_hor[5][2]);
-																				
-		//		for (i = 0; i < this->NumberOfMeasurements; i++) {
-			//			for (j=0; j< 4; j++){
-				//			for (k=0; k< 4; k++){
-					//				x_hor[i][j] +=A_hor[i][j][k]*x_hor_buff[i][k];}		
-				//				this -> x_hor_cpy=	this ->x_hor[i][j]+ (this ->B_hor[i][j]*hor_meas);	
-					//			this->x_hor[i][j]=this -> x_hor_cpy;												
-	//					x_hor[i][j]=x_hor[i][j]+B_hor[i][j]*hor_meas;
-										//									}}
-															
-				
-				
-/*			for (i = 0; i < this->NumberOfMeasurements; i++) {
-//				 this ->y_prim[i]= this ->C_prim[i]* this ->x_prim[i];
-//				x_prim[i]=A_prim[i]*x_prim[i]+B_prim[i]*prim_meas;
-				
-//				y_vert[i]=C_vert[i]*x_vert[i];
-//				x_vert[i]=A_vert[i]*x_vert[i]+B_vert[i]*vert_meas;
-				
-				//this -> y_hor[i]=0.0;
-				//}
-				//for (i = 0; i < this->NumberOfMeasurements; i++) {
-				//* this -> x_hor_cpy[i]= this->x_hor[i][j];
-				//* }
-				
-				//for (i = 0; i < this->NumberOfMeasurements; i++) {
-				//for (j=0; j< 4; j++){
-				////	 y_hor[i] += C_hor[i][j]*x_hor[i][j];
-				////	this->y_buff=this->y_buff+this->C_hor[i][j];
-					 //this -> x_hor_cpy= this->x_hor[i][j];
-					 //this -> x_hor_buff[i][j]=  this -> x_hor_cpy;
-			//}
-				////y_buff=0.0;
-				//}
-//				
-/*			for (i = 0; i < this->NumberOfMeasurements; i++) {
-					//for (j=0; j< 4; j++){
-						//for (k=0; k< 4; k++){
-						//x_hor[i][j] +=A[i][j][k]*x_hor_buff[i][j];
-												//}
-						//x_hor[i][j]=x_hor[i][j]+B[i][j]*hormeas;
-										//}
-															//}
-															
-	//		for (i = 0; i < this->NumberOfMeasurements; i++) {
-				//y_hor[i]=C_hor[i][0]*x_hor[i][0]+C_hor[i][1]*x_hor[i][1]+C_hor[i][2]*x_hor[i][2]+C_hor[i][3]*x_hor[i][3];
-	//			this-> y_hor[i]=0;
-	//			for (j=0; j< 4; j++){
-	//				this->y_hor[i]=this->C_hor[i][j]*this->x_hor[i][j]+this->y_hor[i];
-	//				x_hor_buff[i][j]=x_hor[i][j];
-	//								}
-	//		x_hor[i][0]=A_hor[i][0][0]*x_hor_buff[i][0]+A_hor[i][0][1]*x_hor_buff[i][1]+A_hor[i][0][2]*x_hor_buff[i][2]+A_hor[i][0][3]*x_hor_buff[i][3]+B_hor[i][0]*hor_meas;				
-	//		x_hor[i][1]=A_hor[i][1][0]*x_hor_buff[i][0]+A_hor[i][1][1]*x_hor_buff[i][1]+A_hor[i][1][2]*x_hor_buff[i][2]+A_hor[i][1][3]*x_hor_buff[i][3]+B_hor[i][1]*hor_meas;				
-	//		x_hor[i][2]=A_hor[i][2][0]*x_hor_buff[i][0]+A_hor[i][2][1]*x_hor_buff[i][1]+A_hor[i][2][2]*x_hor_buff[i][2]+A_hor[i][2][3]*x_hor_buff[i][3]+B_hor[i][2]*hor_meas;				
-	//		x_hor[i][3]=A_hor[i][3][0]*x_hor_buff[i][0]+A_hor[i][3][1]*x_hor_buff[i][1]+A_hor[i][3][2]*x_hor_buff[i][2]+A_hor[i][3][3]*x_hor_buff[i][3]+B_hor[i][3]*hor_meas;				
-	//			}	
-				
-				
-			
-			//for (i = 0; i < this->NumberOfMeasurements; i++) {
-				//ADC_ext_flux[i]=y_prim[i]+y_vert[i]+y_hor[i];
-				//ADC_final[i]=ADC_WO_Wb[i]-ADC_ext_flux[i];
-				//}
-			
 
-
-
-
-/*
-			//Substract from corrected_probes magnetic flu values due to the Vertical, Horizontal and Primary coils
-			//for (i = 0; i < this->NumberOfMeasurements; i++) {
-				//corrected_probes[i] = corrected_probes[i]-allmirnv_vert[i]-allmirnv_hor[i]-allmirnv_prim[i];
-			//}
-			*/
 			
 			//Substract calculated external fluxes from the mirnov measurements
 			
@@ -1337,9 +1256,10 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 				for(j=0; j<12; j++){
 					this->m= 12*(i)+j;
 					//this->Bmag_rec_buff +=  this->Mfp[m] * (this->Ipf[j]);
-					this->Bmag_rec_corr_buff += this->Mfp[m] * (this->Ipf_corr[j]));
+					this->Bmag_rec_corr_buff += this->Mfp[m] * (this->Ipf_corr[j]);
 					
 				}
+				
 				//this->Bmag_rec[i] = this->Bmag_rec_buff;
 				this->Bmag_rec_corr[i] = this->Bmag_rec_corr_buff;
 				//this->Bmag_rec_buff = 0.0;
@@ -1348,8 +1268,9 @@ bool MagneticsGAM::Execute(GAM_FunctionNumbers functionNumber) {
 			}
 			//MIRNOV
 			this->Rmse_buff = 0.0;
+			this->RMSE_mirnv= 0.0;
 			for(i = 0; i < 12; i++) {
-				this->Rmse_buff += (Bmag_rec_corr_buff - (this->ADC_WO_Wb[j]/(50*49*1e-6)) )*(Bmag_rec_corr_buff - (this->ADC_WO_Wb[j]/(50*49*1e-6)) );
+				this->Rmse_buff += (Bmag_rec_corr[i] - (this->ADC_final[i]/(50*49*1e-6)) )*(Bmag_rec_corr[i] - (this->ADC_final[i]/(50*49*1e-6)) );
 			}
 			this->Rmse_buff = this->Rmse_buff / 12;
 			this->RMSE_mirnv = sqrt(this->Rmse_buff);
