@@ -80,12 +80,15 @@ private:
 		float Magnetics_ext_flux_10;
 		float Magnetics_ext_flux_11;
 		// Radial and vertical position and plasma current with flux corrections
-		float Magnetics_R_corrctd;
-		float Magnetics_z_corrctd;
+		float Magnetics_R_uncorrctd;
+		float Magnetics_z_uncorrctd;
 		float Magnetics_Ip_corrctd;
 		// Variables from the position reconstruction
 		float RMSE_mirnv;
-		float RMSE_Ifil;
+		//new
+		float SumIfil;
+		//end
+		//float RMSE_Ifil;
 		float Magnetics_SVD_recons_0;
 		float Magnetics_SVD_recons_1;
 		float Magnetics_SVD_recons_2;
@@ -98,6 +101,7 @@ private:
 		float Magnetics_SVD_recons_9;
 		float Magnetics_SVD_recons_10;
 		float Magnetics_SVD_recons_11;
+
 
 	};
 
@@ -156,6 +160,14 @@ private:
 	float Ipf_corr_buff;
 	float division;
 	float division_corr;
+	//add from UNINA
+	float numFilament;//number of filament
+	float Bmag_rec_buff;
+	float Bmag_rec_corr_buff;
+	float Rmse_buff;
+	float RMSE_mirnv;
+	float PlasmaCurrent;
+	//end
 	
 	//Cenas pra os modelos em espaço de estados
 	float *x_prim;
