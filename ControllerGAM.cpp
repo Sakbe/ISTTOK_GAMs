@@ -902,19 +902,19 @@ NOT USED FOR NOW      vertical field PS - radial position controller (auto)
 	
 					old_HorizontalWaveformMode = 2;
 				}
-				if (inputstruct[0].PrimaryWaveformMode == 1){
+				if (inputstruct[0].PrimaryWaveformMode == 1 || inputstruct[0].PrimaryWaveformMode == 8){
 					
 					outputstruct[0].SendToPrimaryValue = inputstruct[0].PrimaryOutputWaveform;
 					
 					old_PrimaryWaveformMode = 1;
 				}
-				if (inputstruct[0].VerticalWaveformMode == 1){
+				if (inputstruct[0].VerticalWaveformMode == 1 || inputstruct[0].VerticalWaveformMode == 8){
 				
 					outputstruct[0].SendToVerticalValue = inputstruct[0].VerticalOutputWaveform;
 					
 					old_VerticalWaveformMode = 1;
 				}
-				if (inputstruct[0].HorizontalWaveformMode == 1){
+				if (inputstruct[0].HorizontalWaveformMode == 1 || inputstruct[0].HorizontalWaveformMode == 8){
 					
 					outputstruct[0].SendToHorizontalValue = inputstruct[0].HorizontalOutputWaveform;
 					
