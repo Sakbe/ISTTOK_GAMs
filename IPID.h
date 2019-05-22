@@ -116,6 +116,8 @@ public:
 	
 	float CalculatePID(float process_variable, float setpoint);
 	
+	float CalculatePID_sign(float process_variable, float setpoint, int sign);
+	
 	float CalculatePI(float process_variable, float setpoint);
 	
 	float CalculateP(float process_variable, float setpoint);
