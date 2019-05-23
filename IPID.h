@@ -124,6 +124,8 @@ public:
 	
 	float CalculatePID_types(float process_variable, float setpoint, float type);
 	
+	float MIMOcontrol(float R, float z, float RSP, float zSP, float sign);
+	
 	float ReturnErrorInPercentage(float process_variable, float setpoint);
 	
 	~IPID();
