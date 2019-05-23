@@ -139,6 +139,9 @@ private:
 	float PID_primary_derivative_normal;
 	float PID_primary_derivative_hard;
 
+	// stuff for MIMO control
+	float *MIMO_outputs;
+	
 	bool view_input_variables;
 	
 	int puffing_mode;
