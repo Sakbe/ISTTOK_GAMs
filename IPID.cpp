@@ -2,7 +2,7 @@
 //
 //		IPID.cpp - differential PID equation
 //		Ivo Carvalho 29/4/2011
-//
+//		Bimbows updated 05/2019	
 //******************************************************************************
 
 
@@ -96,12 +96,18 @@ bool IPID::SetLimits(float set_upper_limit, float set_lower_limit){
 }
 
 float IPID::CalculatePID(float process_variable, float setpoint){
+
 	this->error = setpoint - process_variable;
-	
-	this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV + process_variable - this->old_old_PV);
-	
+	//type C
+	// this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
+	//type A
+	this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+
 	this->old_old_PV = this->old_PV;
 	this->old_PV = process_variable;
+
+    this->old_old_error = this->old_error;
+	this->old_error = this->error;
 
 	if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
 	if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
@@ -122,6 +128,91 @@ float IPID::CalculatePI(float process_variable, float setpoint){
 	
 	return this->old_output;
 }
+
+float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign){
+	
+			if (sign == 1) {
+			this->error = setpoint - process_variable;
+			}else if (sign == 2){
+			this->error = -setpoint + process_variable;}
+			
+			//type C
+			 //this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
+			//type A
+			this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			
+			this->old_old_PV = this->old_PV;
+			this->old_PV = process_variable;
+			this->old_old_error = this->old_error;
+			this->old_error = this->error;
+			if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
+			if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
+			return this->old_output;
+	}
+	
+	
+float IPID::CalculatePID_hor(float process_variable, float setpoint, int sign){
+	
+			if (sign == 1) {
+			this->error = setpoint - process_variable;
+			this->old_output = this->old_output - this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+
+			}else if (sign == 2){
+			this->error = -setpoint + process_variable;
+			this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+
+			}
+						
+			//type C
+			// this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
+			//type A
+			//this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			
+			this->old_old_PV = this->old_PV;
+			this->old_PV = process_variable;
+			this->old_old_error = this->old_error;
+			this->old_error = this->error;
+			if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
+			if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
+			return this->old_output;
+	}
+	
+
+float IPID::CalculatePID_sign(float process_variable, float setpoint, int sign){
+
+	//new
+	//sing == 1 is +error & sing==2 is -error
+	if (sign == 1) {
+			this->error = setpoint - process_variable;
+			//type C
+			 this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
+			//type A
+			//this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->old_old_PV = this->old_PV;
+			this->old_PV = process_variable;
+			this->old_old_error = this->old_error;
+			this->old_error = this->error;
+			if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
+			if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
+			return this->old_output;
+		}else if (sign == 2){
+			//this->error = -setpoint + process_variable;
+			this->error = setpoint - process_variable;
+			//type C
+			 this->old_output = this->old_output + this->P_realtime_constant * (process_variable - this->old_PV) - this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
+			//type A
+			//this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->old_old_PV = this->old_PV;
+			this->old_PV = process_variable;
+			this->old_old_error = this->old_error;
+			this->old_error = this->error;
+			if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
+			if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
+			return this->old_output;
+	}
+	} 
+	//end new
+
 
 float IPID::CalculateP(float process_variable, float setpoint){
 	this->error = setpoint - process_variable;
