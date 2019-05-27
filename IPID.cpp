@@ -133,13 +133,18 @@ float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign){
 	
 			if (sign == 1) {
 			this->error = setpoint - process_variable;
-			}else if (sign == 2){
-			this->error = -setpoint + process_variable;}
+			this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+
+			}else if (sign == 2){	
+				this->error = -setpoint + process_variable;
+				this->old_output = this->old_output + 0.55*this-> P_realtime_constant* (this->error - this->old_error) +  0.55*this->I_realtime_constant *this->error +  0.55 * this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+
+			}
 			
 			//type C
 			 //this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
 			//type A
-			this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			//this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
 			
 			this->old_old_PV = this->old_PV;
 			this->old_PV = process_variable;
@@ -155,7 +160,7 @@ float IPID::CalculatePID_hor(float process_variable, float setpoint, int sign){
 	
 			if (sign == 1) {
 			this->error = setpoint - process_variable;
-			this->old_output = this->old_output - this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->old_output = this->old_output + 0.75*this-> P_realtime_constant* (this->error - this->old_error) +  0.75*this->I_realtime_constant *this->error +  0.75*this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
 
 			}else if (sign == 2){
 			this->error = -setpoint + process_variable;
