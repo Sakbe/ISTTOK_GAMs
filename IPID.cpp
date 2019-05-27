@@ -26,6 +26,11 @@ IPID::IPID(float set_Kp_constant, float set_Ki_constant, float set_Kd_constant, 
 	this->old_old_PV = 0;
 	this->old_error = 0;
 	this->old_old_error = 0;
+	//new
+	this-> bumpless = 0;
+	this-> proportional = 0;
+	this-> integral = 0;
+	this-> derivative = 0;
 }
 // create without cycle time, just with the constants used in realtime
 IPID::IPID(float set_P_realtime_constant, float set_I_realtime_constant, float set_D_realtime_constant, float set_upper_limit, float set_lower_limit){
@@ -44,6 +49,11 @@ IPID::IPID(float set_P_realtime_constant, float set_I_realtime_constant, float s
 	this->old_old_PV = 0;
 	this->old_error = 0;
 	this->old_old_error = 0;
+	//new
+	this-> bumpless = 0;
+	this-> proportional = 0;
+	this-> integral = 0;
+	this-> derivative = 0;
 }
 
 // ********* Destructor ********************************************
@@ -129,17 +139,44 @@ float IPID::CalculatePI(float process_variable, float setpoint){
 	return this->old_output;
 }
 
-float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign){
-	
-			if (sign == 1) {
-			this->error = setpoint - process_variable;
-			this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-
-			}else if (sign == 2){	
-				this->error = -setpoint + process_variable;
-				this->old_output = this->old_output + 0.55*this-> P_realtime_constant* (this->error - this->old_error) +  0.55*this->I_realtime_constant *this->error +  0.55 * this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-
+float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign, int man2auto){	
+	if (sign == 1) {
+		this->error = setpoint - process_variable;
+		if( man2auto == 0 && this->bumpless == 0) {//bumpless
+			this->old_output = process_variable;
+			this->bumpless = 1;
+			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+			this->integral = process_variable - this->derivative - this->proportional;
+		}
+		if (this->bumpless == 1) {//pid
+			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+			this->integral = this->integral + this->I_realtime_constant *this->error;
+			this->old_output = this->proportional +  this->integral +  this->derivative;
+		}
+		if (man2auto == -1){//reset
+			this->bumpless = 0;
+		}
+		}else if (sign == 2){	
+			this->error = -setpoint + process_variable;
+			if( man2auto == 0 && this->bumpless == 0) {
+				this->old_output = process_variable;
+				this->bumpless = 1;
+				this->derivative =  0.5*this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+				this->proportional = 0.5*this-> P_realtime_constant* (this->error - this->old_error);
+				this->integral = process_variable - this->derivative - this->proportional;
 			}
+			if (this->bumpless == 1) {//pid
+				this->derivative = 0.5*this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+				this->proportional = 0.5*this-> P_realtime_constant* (this->error - this->old_error);
+				this->integral =  0.5*this->integral + this->I_realtime_constant *this->error;
+				this->old_output =  this->proportional +  this->integral +  this->derivative;
+			}
+			if (man2auto == -1){//reset
+				this->bumpless = 0;
+			}
+		}
 			
 			//type C
 			 //this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
@@ -150,26 +187,64 @@ float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign){
 			this->old_PV = process_variable;
 			this->old_old_error = this->old_error;
 			this->old_error = this->error;
-			if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
-			if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
+			
+			// Anti-Windup
+			if(this->old_output > this->upper_limit) {
+				this->old_output = this->upper_limit;
+				this->integral = this->old_output - this->derivative - this->proportional;
+
+				}
+			
+			if(this->old_output < this->lower_limit) {
+				this->old_output = this->lower_limit;
+				this->integral = this->old_output - this->derivative - this->proportional;
+				}
+			
 			return this->old_output;
 	}
 	
 	
-float IPID::CalculatePID_hor(float process_variable, float setpoint, int sign){
-	
-			if (sign == 1) {
-			this->error = setpoint - process_variable;
-			this->old_output = this->old_output + 0.75*this-> P_realtime_constant* (this->error - this->old_error) +  0.75*this->I_realtime_constant *this->error +  0.75*this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-
-			}else if (sign == 2){
+float IPID::CalculatePID_hor(float process_variable, float setpoint, int sign, int man2auto){
+	if (sign == 1) {
+		this->error = setpoint - process_variable;
+		if( man2auto == 0 && this->bumpless == 0) {//bumpless
+			this->old_output = process_variable;
+			this->bumpless = 1;
+			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+			this->integral = process_variable - this->derivative - this->proportional;
+		}
+		if (this->bumpless == 1) {//pid
+			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+			this->integral = this->integral + this->I_realtime_constant *this->error;
+			this->old_output =this->proportional +  this->integral +  this->derivative;
+		}
+		if (man2auto == -1){//reset
+			this->bumpless = 0;
+		}
+		}else if (sign == 2){	
 			this->error = -setpoint + process_variable;
-			this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-
+			if( man2auto == 0 && this->bumpless == 0) {
+				this->old_output = process_variable;
+				this->bumpless = 1;
+				this->derivative =  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+				this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+				this->integral = process_variable - this->derivative - this->proportional;
 			}
-						
+			if (this->bumpless == 1) {//pid
+				this->derivative =  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+				this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+				this->integral =  this->integral + this->I_realtime_constant *this->error;
+				this->old_output =  this->proportional +  this->integral +  this->derivative;
+			}
+			if (man2auto == -1){//reset
+				this->bumpless = 0;
+			}
+		}
+			
 			//type C
-			// this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
+			 //this->old_output = this->old_output - this->P_realtime_constant * (process_variable - this->old_PV) + this->I_realtime_constant * this->error - this->D_realtime_constant * (process_variable - 2 * this->old_PV +  this->old_old_PV);
 			//type A
 			//this->old_output = this->old_output + this-> P_realtime_constant* (this->error - this->old_error) +  this->I_realtime_constant *this->error +  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
 			
@@ -177,8 +252,19 @@ float IPID::CalculatePID_hor(float process_variable, float setpoint, int sign){
 			this->old_PV = process_variable;
 			this->old_old_error = this->old_error;
 			this->old_error = this->error;
-			if(this->old_output > this->upper_limit) this->old_output = this->upper_limit;
-			if(this->old_output < this->lower_limit) this->old_output = this->lower_limit;
+			
+			// Anti-Windup
+			if(this->old_output > this->upper_limit) {
+				this->old_output = this->upper_limit;
+				this->integral = this->old_output - this->derivative - this->proportional;
+
+				}
+			
+			if(this->old_output < this->lower_limit) {
+				this->old_output = this->lower_limit;
+				this->integral = this->old_output - this->derivative - this->proportional;
+				}
+			
 			return this->old_output;
 	}
 	

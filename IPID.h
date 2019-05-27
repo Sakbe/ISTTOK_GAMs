@@ -38,6 +38,10 @@ private:
 	float old_output;
 	float old_PV;
 	float old_old_PV;
+	int bumpless;
+	float proportional;
+	float integral;
+	float derivative;
 	//MIMO controller stuff
 	float *A;
 	float *C;
@@ -133,9 +137,9 @@ public:
 	
 	float CalculatePID_types(float process_variable, float setpoint, float type);
 	
-	float CalculatePID_vert(float process_variable, float setpoint, int sign);
+	float CalculatePID_vert(float process_variable, float setpoint, int sign, int man2auto);
 	
-	float CalculatePID_hor(float process_variable, float setpoint, int sign);
+	float CalculatePID_hor(float process_variable, float setpoint, int sign, int man2auto);
 	
 	float MIMOcontrol(float R, float z, float RSP, float zSP, float sign);
 	

@@ -680,6 +680,8 @@ NOT USED FOR NOW      vertical field PS - radial position controller (auto)
 			
 			
 			if (inputstruct[0].PrimaryWaveformMode == 7 || inputstruct[0].HorizontalWaveformMode == 7 || inputstruct[0].VerticalWaveformMode == 7){
+				
+				float temp;
 								
 				outputstruct[0].SendToPrimaryValue = inputstruct[0].PrimaryCurrent;
 				outputstruct[0].SendToVerticalValue = inputstruct[0].VerticalCurrent;
@@ -688,6 +690,12 @@ NOT USED FOR NOW      vertical field PS - radial position controller (auto)
 				old_PrimaryWaveformMode = 7;
 				old_VerticalWaveformMode = 7;
 				old_HorizontalWaveformMode = 7;
+				
+				// bumpless condition to -1
+				 temp =	 this->horizontal_position_PID->CalculatePID_vert(inputstruct[0].PositionR,(inputstruct[0].VerticalOutputWaveform/1000),2,-1);
+				temp =	 this->vertical_position_PID->CalculatePID_hor(inputstruct[0].PositionR,(inputstruct[0].VerticalOutputWaveform/1000),2,-1);
+	
+				
 			}
 				
 			else if (inputstruct[0].PrimaryWaveformMode == 6 || inputstruct[0].HorizontalWaveformMode == 6 || inputstruct[0].VerticalWaveformMode == 6){
@@ -878,10 +886,10 @@ NOT USED FOR NOW      vertical field PS - radial position controller (auto)
 					if (inputstruct[0].PrimaryCurrent > 25 && inputstruct[0].PlasmaCurrent > 750) {
 						
 						//outputstruct[0].SendToVerticalValue = this->horizontal_position_PID->CalculatePID((2 *(inputstruct[0].VerticalOutputWaveform/1000) - inputstruct[0].PositionR),(inputstruct[0].VerticalOutputWaveform/1000));
-						outputstruct[0].SendToVerticalValue = this->horizontal_position_PID->CalculatePID_vert(inputstruct[0].PositionR,(inputstruct[0].VerticalOutputWaveform/1000),2);
+						outputstruct[0].SendToVerticalValue = this->horizontal_position_PID->CalculatePID_vert(inputstruct[0].PositionR,(inputstruct[0].VerticalOutputWaveform/1000),2,0);
 					}
 					if (inputstruct[0].PrimaryCurrent < -25 && inputstruct[0].PlasmaCurrent < -750) {
-						outputstruct[0].SendToVerticalValue = this->horizontal_position_PID->CalculatePID_vert(inputstruct[0].PositionR,(inputstruct[0].VerticalOutputWaveform/1000),1);
+						outputstruct[0].SendToVerticalValue = this->horizontal_position_PID->CalculatePID_vert(inputstruct[0].PositionR,(inputstruct[0].VerticalOutputWaveform/1000),1,0);
 					}
 					// else: keep the output (no changes)
 	
@@ -896,10 +904,10 @@ NOT USED FOR NOW      vertical field PS - radial position controller (auto)
 					if (inputstruct[0].PrimaryCurrent < -25 && inputstruct[0].PlasmaCurrent < -750) {
 						
 						//outputstruct[0].SendToHorizontalValue = this->vertical_position_PID->CalculatePID((2 * inputstruct[0].HorizontalOutputWaveform/1000 - inputstruct[0].PositionZ), inputstruct[0].HorizontalOutputWaveform/1000);
-						outputstruct[0].SendToHorizontalValue = this->vertical_position_PID->CalculatePID_hor( inputstruct[0].PositionZ, inputstruct[0].HorizontalOutputWaveform/1000,2);
+						outputstruct[0].SendToHorizontalValue = this->vertical_position_PID->CalculatePID_hor( inputstruct[0].PositionZ, inputstruct[0].HorizontalOutputWaveform/1000,2,0);
 					}
 					if (inputstruct[0].PrimaryCurrent > 25 && inputstruct[0].PlasmaCurrent > 750) {
-						outputstruct[0].SendToHorizontalValue = this->vertical_position_PID->CalculatePID_hor(inputstruct[0].PositionZ, inputstruct[0].HorizontalOutputWaveform/1000,1);
+						outputstruct[0].SendToHorizontalValue = this->vertical_position_PID->CalculatePID_hor(inputstruct[0].PositionZ, inputstruct[0].HorizontalOutputWaveform/1000,1,0);
 					}
 					// else: keep the output (no changes)
 	
