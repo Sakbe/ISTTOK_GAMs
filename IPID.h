@@ -50,7 +50,7 @@ private:
 	float *K;
 	float *Nbar;
     float *x;	
-	
+	int antiw;
 	
 
 public:

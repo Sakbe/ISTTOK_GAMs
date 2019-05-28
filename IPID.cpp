@@ -31,6 +31,7 @@ IPID::IPID(float set_Kp_constant, float set_Ki_constant, float set_Kd_constant, 
 	this-> proportional = 0;
 	this-> integral = 0;
 	this-> derivative = 0;
+	this-> antiw=0;
 }
 // create without cycle time, just with the constants used in realtime
 IPID::IPID(float set_P_realtime_constant, float set_I_realtime_constant, float set_D_realtime_constant, float set_upper_limit, float set_lower_limit){
@@ -140,37 +141,37 @@ float IPID::CalculatePI(float process_variable, float setpoint){
 }
 
 float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign, int man2auto){	
-	if (sign == 1) {
+	if (sign == 1) {// Negative current
 		this->error = setpoint - process_variable;
 		if( man2auto == 0 && this->bumpless == 0) {//bumpless
 			this->old_output = process_variable;
 			this->bumpless = 1;
-			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+			this->derivative = this->D_realtime_constant * (this->error + 2 * this->old_error -this->old_old_error);
+			this->proportional = this-> P_realtime_constant* (this->error + this->old_error);
 			this->integral = process_variable - this->derivative - this->proportional;
 		}
 		if (this->bumpless == 1) {//pid
 			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
+			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);			
 			this->integral = this->integral + this->I_realtime_constant *this->error;
-			this->old_output = this->proportional +  this->integral +  this->derivative;
+			this->old_output =  this->proportional +  this->integral +  this->derivative;
 		}
 		if (man2auto == -1){//reset
 			this->bumpless = 0;
 		}
-		}else if (sign == 2){	
+		}else if (sign == 2){	// Positive current
 			this->error = -setpoint + process_variable;
 			if( man2auto == 0 && this->bumpless == 0) {
 				this->old_output = process_variable;
 				this->bumpless = 1;
-				this->derivative =  0.5*this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-				this->proportional = 0.5*this-> P_realtime_constant* (this->error - this->old_error);
+				this->derivative =  this->D_realtime_constant * (this->error + 2 * this->old_error - this->old_old_error);
+				this->proportional = this-> P_realtime_constant* (this->error + this->old_error);
 				this->integral = process_variable - this->derivative - this->proportional;
 			}
 			if (this->bumpless == 1) {//pid
-				this->derivative = 0.5*this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
-				this->proportional = 0.5*this-> P_realtime_constant* (this->error - this->old_error);
-				this->integral =  0.5*this->integral + this->I_realtime_constant *this->error;
+				this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+				this->proportional = this-> P_realtime_constant* (this->error - this->old_error);					
+				this->integral =  this-> integral +this->I_realtime_constant *this->error;
 				this->old_output =  this->proportional +  this->integral +  this->derivative;
 			}
 			if (man2auto == -1){//reset
@@ -190,53 +191,54 @@ float IPID::CalculatePID_vert(float process_variable, float setpoint, int sign, 
 			
 			// Anti-Windup
 			if(this->old_output > this->upper_limit) {
-				this->old_output = this->upper_limit;
+				this->old_output = this->upper_limit;				
 				this->integral = this->old_output - this->derivative - this->proportional;
-
 				}
+				
 			
 			if(this->old_output < this->lower_limit) {
-				this->old_output = this->lower_limit;
+				this->old_output = this->lower_limit;				
 				this->integral = this->old_output - this->derivative - this->proportional;
-				}
+			}
+			
 			
 			return this->old_output;
 	}
 	
 	
 float IPID::CalculatePID_hor(float process_variable, float setpoint, int sign, int man2auto){
-	if (sign == 1) {
+	if (sign == 1) { // Positive current
 		this->error = setpoint - process_variable;
 		if( man2auto == 0 && this->bumpless == 0) {//bumpless
 			this->old_output = process_variable;
 			this->bumpless = 1;
-			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+			this->derivative = this->D_realtime_constant * (this->error + 2 * this->old_error - this->old_old_error);
 			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
 			this->integral = process_variable - this->derivative - this->proportional;
 		}
 		if (this->bumpless == 1) {//pid
 			this->derivative = this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
 			this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
-			this->integral = this->integral + this->I_realtime_constant *this->error;
-			this->old_output =this->proportional +  this->integral +  this->derivative;
+			this->integral =  this->integral + this->I_realtime_constant *this->error;
+			this->old_output = this->proportional +  this->integral +  this->derivative;
 		}
 		if (man2auto == -1){//reset
 			this->bumpless = 0;
 		}
-		}else if (sign == 2){	
+		}else if (sign == 2){	// Negative current
 			this->error = -setpoint + process_variable;
-			if( man2auto == 0 && this->bumpless == 0) {
+			if( man2auto == 0 && this->bumpless == 0) { //bumpless
 				this->old_output = process_variable;
 				this->bumpless = 1;
-				this->derivative =  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
+				this->derivative =  this->D_realtime_constant * (this->error + 2 * this->old_error - this->old_old_error);
 				this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
 				this->integral = process_variable - this->derivative - this->proportional;
 			}
 			if (this->bumpless == 1) {//pid
 				this->derivative =  this->D_realtime_constant * (this->error - 2 * this->old_error + this->old_old_error);
 				this->proportional = this-> P_realtime_constant* (this->error - this->old_error);
-				this->integral =  this->integral + this->I_realtime_constant *this->error;
-				this->old_output =  this->proportional +  this->integral +  this->derivative;
+				this->integral =   this->integral + this->I_realtime_constant *this->error;
+				this->old_output = this->proportional +  this->integral +  this->derivative;
 			}
 			if (man2auto == -1){//reset
 				this->bumpless = 0;
